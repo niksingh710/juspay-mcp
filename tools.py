@@ -4,14 +4,7 @@ from mcp.server.lowlevel import Server
 from mcp.server.sse import SseServerTransport
 
 import schema
-from api import session, order_status, refund, service_config_time
-from api import production_alerts, merchant_dashboard, code_versions
-from api import gateway_downtime, order_metadata, customer, audit_logs
-from api import merchant_dashboard, code_versions
-from api import gateway_downtime, order_metadata, customer, audit_logs
-from api import merchant_dashboard, code_versions
-from api import gateway_downtime, order_metadata, customer, audit_logs
-from api import merchant_dashboard, code_versions
+from api import *
 
 app = Server("sse")
 
