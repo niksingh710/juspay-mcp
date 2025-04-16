@@ -8,29 +8,42 @@ from api import *
 
 app = Server("sse")
 
+AVAILABLE_TOOLS = [
+    {
+        "name": "session_api_juspay",
+        "description": "Calls the Juspay Session API with the provided payload.",
+        "schema": schema.juspay_session_schema,
+        "handler": session.session_api_juspay
+    },
+    {
+        "name": "order_status_api_juspay",
+        "description": "Calls the Juspay Order Status API with the provided payload.",
+        "schema": schema.juspay_order_status_schema,
+        "handler": order_status.order_status_api_juspay
+    },
+    {
+        "name": "create_refund_juspay",
+        "description": "Calls the Juspay Refund API for the specified order.",
+        "schema": schema.juspay_refund_schema,
+        "handler": refund.create_refund_juspay
+    },
+    {
+        "name": "get_customer_juspay",
+        "description": "Calls the Juspay Get Customer API using the provided customer_id.",
+        "schema": schema.juspay_get_customer_schema,
+        "handler": customer.get_customer_juspay
+    }
+]
+
 @app.list_tools()
 async def list_my_tools() -> list[types.Tool]:
     return [
         types.Tool(
-            name="session_api_juspay",
-            description="Calls the Juspay Session API with the provided payload.",
-            inputSchema=schema.juspay_session_schema,
-        ),
-        types.Tool(
-            name="order_status_api_juspay",
-            description="Calls the Juspay Order Status API with the provided payload.",
-            inputSchema=schema.juspay_order_status_schema,
-        ),
-        types.Tool(
-            name="create_refund_juspay",
-            description="Calls the Juspay Refund API for the specified order.",
-            inputSchema=schema.juspay_refund_schema,
-        ),
-        types.Tool(
-            name="get_customer_juspay",
-            description="Calls the Juspay Get Customer API using the provided customer_id.",
-            inputSchema=schema.juspay_get_customer_schema,
-        ),
+            name=tool["name"],
+            description=tool["description"],
+            inputSchema=tool["schema"],
+        )
+        for tool in AVAILABLE_TOOLS
     ]
 
 @app.call_tool()
@@ -38,45 +51,23 @@ async def handle_tool_calls(name: str, arguments: dict) -> list[types.TextConten
     print(f"Calling tool: {name} with args: {arguments}")
 
     try:
-        if name == "session_api_juspay":
-            # Validation for session API tool
-            required_keys = [
-                "order_id", "amount", "customer_id", "customer_email", 
-                "customer_phone", "payment_page_client_id", "action", "return_url"
-            ]
-            if not all(key in arguments for key in required_keys):
-                raise ValueError(f"Missing one or more required arguments for session_api_juspay: {required_keys}")
-            response_data = await session.session_api_juspay(arguments)
-            return [types.TextContent(type="text", text=json.dumps(response_data))]
-
-        elif name == "order_status_api_juspay":
-            # Validation for Order Status API tool
-            required_keys = ["order_id"]
-            if not all(key in arguments for key in required_keys):
-                raise ValueError(f"Missing one or more required arguments for order_status_api_juspay: {required_keys}")
-            response_data = await order_status.order_status_api_juspay(arguments)
-            return [types.TextContent(type="text", text=json.dumps(response_data))]
-
-        elif name == "create_refund_juspay":
-            required_keys = ["order_id", "unique_request_id", "amount"]
-            if not all(key in arguments for key in required_keys):
-                raise ValueError(f"Missing one or more required arguments for create_refund_juspay: {required_keys}")
-            response_data = await refund.create_refund_juspay(arguments)
-            return [types.TextContent(type="text", text=json.dumps(response_data))]
-
-        elif name == "get_customer_juspay":
-            required_keys = ["customer_id"]
-            if not all(key in arguments for key in required_keys):
-                raise ValueError(f"Missing required argument for get_customer_juspay: {required_keys}")
-            response_data = await customer.get_customer_juspay(arguments)
-            return [types.TextContent(type="text", text=json.dumps(response_data))]
-        
-        else:
-            print(f"Error: Unknown tool '{name}'")
+        tool_entry = next((t for t in AVAILABLE_TOOLS if t["name"] == name), None)
+        if not tool_entry:
             raise ValueError(f"Unknown tool: {name}")
+
+        schema = tool_entry["schema"]
+        required = schema.get("required", [])
+        missing = [key for key in required if key not in arguments]
+        if missing:
+            raise ValueError(f"Missing required fields for {name}: {missing}")
+
+        handler = tool_entry["handler"]
+        if not handler:
+            raise ValueError(f"No handler defined for tool: {name}")
+
+        response = await handler(arguments)
+        return [types.TextContent(type="text", text=json.dumps(response))]
 
     except Exception as e:
         print(f"Error executing tool {name}: {e}")
-        error_message = f"Tool execution failed: {str(e)}"
-        return [types.TextContent(type="text", text=f"ERROR: {error_message}")]
-
+        return [types.TextContent(type="text", text=f"ERROR: Tool execution failed: {str(e)}")]
