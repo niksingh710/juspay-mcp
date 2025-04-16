@@ -24,23 +24,25 @@ pip install -e .
 
 ## Usage
 
-### Starting the Server
+### Starting the Server for HTTP
 
 You can start the server either using the installed CLI tool:
 
 ```bash
-# If installed with pip/uv
-juspay-tools --host 0.0.0.0 --port 8000
+python main.py --mode http --host 0.0.0.0 --port 8000
 ```
+This will start the MCP server on `http://0.0.0.0:8000/sse`.
 
-Or directly from source:
+### Starting the Server for STDIO
 
 ```bash
-# From the project root
-python main.py --host 0.0.0.0 --port 8000
+python main.py --mode stdio
+
+# or
+
+python -m juspay_tools --mode stdio
 ```
 
-This will start the MCP server on `http://0.0.0.0:8000/sse`.
 
 ### Available Tools
 

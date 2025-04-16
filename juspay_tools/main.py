@@ -2,11 +2,13 @@ import click
 import os
 import uvicorn
 import dotenv
+import asyncio
 
 from starlette.applications import Starlette
 from starlette.routing import Mount, Route
 from mcp.server.sse import SseServerTransport
 from juspay_tools.tools import app
+from juspay_tools.stdio import run_stdio
 
 # Load environment variables.
 dotenv.load_dotenv()
@@ -14,9 +16,17 @@ dotenv.load_dotenv()
 @click.command()
 @click.option("--host", default="0.0.0.0", help="Host to bind the server to.")
 @click.option("--port", default=8000, type=int, help="Port to listen on for SSE.")
-def main(host: str, port: int):
-    """Runs the MCP server using HTTP/SSE."""
+@click.option("--mode", default="http", type=click.Choice(['http', 'stdio']), 
+              help="Server mode: 'http' for HTTP/SSE server or 'stdio' for stdio server.")
+def main(host: str, port: int, mode: str):
+    """Runs the MCP server in the specified mode."""
     
+    if mode == "stdio":
+        # Run in stdio mode
+        asyncio.run(run_stdio())
+        return
+    
+    # Run in HTTP/SSE mode (default)
     # Define endpoint paths.
     message_endpoint_path = "/messages/"
     sse_endpoint_path = "/sse"
