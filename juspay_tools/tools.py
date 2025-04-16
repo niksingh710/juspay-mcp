@@ -3,10 +3,10 @@ import mcp.types as types
 from mcp.server.lowlevel import Server
 from mcp.server.sse import SseServerTransport
 
-import schema
-from api import *
+from juspay_tools import schema
+from juspay_tools.api import *
 
-app = Server("sse")
+app = Server("juspay")
 
 AVAILABLE_TOOLS = [
     {
