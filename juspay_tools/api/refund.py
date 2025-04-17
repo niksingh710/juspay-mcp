@@ -1,27 +1,9 @@
-import os
-import base64
-import json
 import httpx
-
-JUSPAY_API_KEY = os.getenv("JUSPAY_API_KEY")
-JUSPAY_MERCHANT_ID = os.getenv("JUSPAY_MERCHANT_ID")
+from juspay_tools.config import get_form_headers, ENDPOINTS
 
 async def create_refund_juspay(payload: dict) -> dict:
     """
     Calls the Juspay Refund API securely using httpx with a POST request.
-    
-    The API endpoint is:
-        https://api.juspay.in/orders/{order_id}/refunds
-    
-    The call uses form-url-encoded data containing:
-        - unique_request_id (e.g., "xyz123")
-        - amount (e.g., "100.00")
-    
-    Headers include:
-        - Basic Authorization derived from JUSPAY_API_KEY
-        - version: 2023-06-30
-        - x-routing-id: customer_1122
-        - x-merchantid from environment variable
     
     Args:
         payload (dict): A dictionary with the following required keys:
@@ -35,28 +17,15 @@ async def create_refund_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails.
     """
-    if not JUSPAY_API_KEY or not JUSPAY_MERCHANT_ID:
-        raise ValueError("JUSPAY_API_KEY and JUSPAY_MERCHANT_ID environment variables must be set.")
-    
     order_id = payload.get("order_id")
     if not order_id:
         raise ValueError("The payload must include 'order_id'.")
     
-    # Build the API URL using the order id.
-    api_url = f"https://api.juspay.in/orders/{order_id}/refunds"
+    routing_id = payload.get("customer_id", "default_routing_id")
+    headers = get_form_headers(routing_id)
+    headers["version"] = "2023-06-30"
 
-    # Prepare the Basic Authentication header.
-    auth_string = f"{JUSPAY_API_KEY}:"
-    encoded_auth = base64.b64encode(auth_string.encode()).decode()
-
-    headers = {
-        "Authorization": f"Basic {encoded_auth}",
-        "version": "2023-06-30",
-        "x-routing-id": "customer_1122",  # As per the cURL sample; adjust as needed.
-        "x-merchantid": JUSPAY_MERCHANT_ID,
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Accept": "application/json",
-    }
+    api_url = ENDPOINTS["refund"].format(order_id=order_id)
     
     # Prepare the form data for the POST request.
     # We are sending "unique_request_id" and "amount" as form-url-encoded data.

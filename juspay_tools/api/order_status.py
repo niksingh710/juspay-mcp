@@ -1,10 +1,5 @@
-import os
-import base64
-import json
 import httpx
-
-JUSPAY_API_KEY = os.getenv("JUSPAY_API_KEY")
-JUSPAY_MERCHANT_ID = os.getenv("JUSPAY_MERCHANT_ID")
+from juspay_tools.config import get_json_headers, ENDPOINTS
 
 async def order_status_api_juspay(payload: dict) -> dict:
     """
@@ -22,26 +17,14 @@ async def order_status_api_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails.
     """
-    if not JUSPAY_API_KEY or not JUSPAY_MERCHANT_ID:
-        raise ValueError("JUSPAY_API_KEY and JUSPAY_MERCHANT_ID environment variables must be set.")
-    
     order_id = payload.get("order_id")
     if not order_id:
         raise ValueError("The payload must include 'order_id'.")
     
-    # For GET call, append order_id to the URL.
-    api_url = f"https://sandbox.juspay.in/order/status/{order_id}"
-    
-    # Prepare the Authorization header.
-    auth_string = f"{JUSPAY_API_KEY}:"
-    encoded_auth = base64.b64encode(auth_string.encode()).decode()
-    
-    headers = {
-        "Authorization": f"Basic {encoded_auth}",
-        "x-merchantid": JUSPAY_MERCHANT_ID,
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-    }
+    routing_id = payload.get("customer_id", "default_routing_id")
+    headers = get_json_headers(routing_id)
+
+    api_url = ENDPOINTS["order_status"].format(order_id=order_id)
     
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:

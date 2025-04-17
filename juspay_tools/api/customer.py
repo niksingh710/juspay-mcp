@@ -1,22 +1,9 @@
-import os
-import base64
 import httpx
-import json
-import dotenv
-
-dotenv.load_dotenv()
-
-JUSPAY_API_KEY = os.getenv("JUSPAY_API_KEY")
-JUSPAY_MERCHANT_ID = os.getenv("JUSPAY_MERCHANT_ID")
+from juspay_tools.config import get_form_headers, ENDPOINTS
 
 async def get_customer_juspay(payload: dict) -> dict:
     """
     Calls the Juspay Get Customer API securely using httpx with a GET request.
-    
-    The API endpoint is constructed by appending the provided customer_id to:
-        https://api.juspay.in/customers/{customer_id}
-    
-    The call uses basic authentication (via API key) and required headers.
     
     Args:
         payload (dict): Must include:
@@ -28,26 +15,13 @@ async def get_customer_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails.
     """
-    if not JUSPAY_API_KEY or not JUSPAY_MERCHANT_ID:
-        raise ValueError("JUSPAY_API_KEY and JUSPAY_MERCHANT_ID environment variables must be set.")
-    
     customer_id = payload.get("customer_id")
     if not customer_id:
         raise ValueError("The payload must include 'customer_id'.")
     
-    api_url = f"https://api.juspay.in/customers/{customer_id}"
-    
-    # Prepare the Basic Authentication header.
-    auth_string = f"{JUSPAY_API_KEY}:"
-    encoded_auth = base64.b64encode(auth_string.encode()).decode()
-    
-    headers = {
-        "Authorization": f"Basic {encoded_auth}",
-        "x-merchantid": JUSPAY_MERCHANT_ID,
-        "x-routing-id": "customer_1122",
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Accept": "application/json"
-    }
+    routing_id = customer_id
+    headers = get_form_headers(routing_id)
+    api_url = ENDPOINTS["customer"].format(customer_id=customer_id)
     
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:

@@ -1,9 +1,5 @@
-import base64 
-import os
 import httpx
-
-JUSPAY_API_KEY = os.getenv("JUSPAY_API_KEY")
-JUSPAY_MERCHANT_ID = os.getenv("JUSPAY_MERCHANT_ID")
+from juspay_tools.config import get_json_headers, ENDPOINTS
 
 async def session_api_juspay(payload: dict) -> dict:
     """
@@ -16,21 +12,9 @@ async def session_api_juspay(payload: dict) -> dict:
         A dictionary representing the parsed JSON response from Juspay.
     """
 
-    if not JUSPAY_API_KEY or not JUSPAY_MERCHANT_ID:
-        raise ValueError("JUSPAY_API_KEY and JUSPAY_MERCHANT_ID environment variables must be set.")
-
-    api_url = "https://sandbox.juspay.in/session" 
-
-    auth_string = f"{JUSPAY_API_KEY}:"
-    encoded_auth = base64.b64encode(auth_string.encode()).decode()
-
-    headers = {
-        "Authorization": f"Basic {encoded_auth}",
-        "x-merchantid": JUSPAY_MERCHANT_ID,
-        "x-routing-id": payload.get("customer_id", "default_routing_id"), 
-        "Content-Type": "application/json",
-        "Accept": "application/json", 
-    }
+    routing_id = payload.get("customer_id", "default_routing_id")
+    headers = get_json_headers(routing_id)
+    api_url = ENDPOINTS["session"]
 
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
