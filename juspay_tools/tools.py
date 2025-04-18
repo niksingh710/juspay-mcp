@@ -1,5 +1,6 @@
 import json
 import mcp.types as types
+import inspect
 from mcp.server.lowlevel import Server
 from mcp.server.sse import SseServerTransport
 
@@ -65,7 +66,12 @@ async def handle_tool_calls(name: str, arguments: dict) -> list[types.TextConten
         if not handler:
             raise ValueError(f"No handler defined for tool: {name}")
 
-        response = await handler(arguments)
+        sig = inspect.signature(handler)
+        if len(sig.parameters) == 0:
+            response = await handler()
+        else:
+            response = await handler(arguments)
+            
         return [types.TextContent(type="text", text=json.dumps(response))]
 
     except Exception as e:
