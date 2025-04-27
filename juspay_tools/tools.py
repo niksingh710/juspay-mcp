@@ -65,13 +65,26 @@ async def handle_tool_calls(name: str, arguments: dict) -> list[types.TextConten
         handler = tool_entry["handler"]
         if not handler:
             raise ValueError(f"No handler defined for tool: {name}")
+        
+        meta_info = arguments.pop("juspay_meta_info", None)
 
         sig = inspect.signature(handler)
-        if len(sig.parameters) == 0:
+        param_count = len(sig.parameters)
+
+        if param_count == 0:
             response = await handler()
+
+        elif param_count == 1:
+            if arguments or not meta_info:
+                response = await handler(arguments)
+            else:
+                response = await handler(meta_info)
+
+        elif param_count == 2:
+            response = await handler(arguments, meta_info)
+
         else:
-            response = await handler(arguments)
-            
+            raise ValueError(f"Unsupported number of parameters in tool handler: {param_count}")
         return [types.TextContent(type="text", text=json.dumps(response))]
 
     except Exception as e:
