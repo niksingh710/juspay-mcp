@@ -1,5 +1,6 @@
 import httpx
-from juspay_tools.config import get_json_headers, ENDPOINTS 
+from juspay_tools.config import ENDPOINTS 
+from juspay_tools.api.utils import call
 
 async def order_status_api_juspay(payload: dict) -> dict:
     """
@@ -27,23 +28,7 @@ async def order_status_api_juspay(payload: dict) -> dict:
     if not order_id:
         raise ValueError("The payload must include 'order_id'.")
 
-    routing_id = payload.get("customer_id")
-    headers = get_json_headers(routing_id=routing_id) 
+    customer_id = payload.get("customer_id")
 
     api_url = ENDPOINTS["order_status"].format(order_id=order_id)
-
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        try:
-            print(f"Calling Juspay Order Status API at: {api_url}")
-            response = await client.get(api_url, headers=headers)
-            response.raise_for_status()
-            response_data = response.json()
-            print(f"Order Status API Response Data: {response_data}")
-            return response_data
-        except httpx.HTTPStatusError as e:
-            error_content = e.response.text if e.response is not None else "Unknown error"
-            print(f"HTTP Error calling Juspay Order Status API: {e.status_code} - {error_content}")
-            raise Exception(f"Juspay Order Status API Error ({e.status_code}): {error_content}") from e
-        except Exception as e:
-            print(f"Error during Juspay Order Status API call: {e}")
-            raise Exception(f"Failed to call Juspay Order Status API: {e}") from e
+    await call(api_url, customer_id)

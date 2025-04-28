@@ -1,5 +1,6 @@
 import httpx
-from juspay_tools.config import get_form_headers, ENDPOINTS
+from juspay_tools.config import ENDPOINTS
+from juspay_tools.api.utils import post
 
 async def create_refund_juspay(payload: dict) -> dict:
     """
@@ -37,8 +38,7 @@ async def create_refund_juspay(payload: dict) -> dict:
          raise ValueError("The payload must include 'amount'.")
 
     
-    routing_id = payload.get("customer_id")
-    headers = get_form_headers(routing_id=routing_id)
+    customer_id = payload.get("customer_id")
     
     api_url = ENDPOINTS["refund"].format(order_id=order_id)
     
@@ -46,19 +46,4 @@ async def create_refund_juspay(payload: dict) -> dict:
         "unique_request_id": unique_request_id,
         "amount": amount,
     }
-
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        try:
-            print(f"Calling Juspay Refund API at: {api_url} with form data: {form_data}")
-            response = await client.post(api_url, headers=headers, data=form_data)
-            response.raise_for_status()
-            response_data = response.json()
-            print(f"Refund API Response Data: {response_data}")
-            return response_data
-        except httpx.HTTPStatusError as e:
-            error_content = e.response.text if e.response is not None else "Unknown error"
-            print(f"HTTP Error calling Refund API: {e.status_code} - {error_content}")
-            raise Exception(f"Juspay Refund API Error ({e.status_code}): {error_content}") from e
-        except Exception as e:
-            print(f"Error during Refund API call: {e}")
-            raise Exception(f"Failed to call Juspay Refund API: {e}") from e
+    await post(api_url, form_data)

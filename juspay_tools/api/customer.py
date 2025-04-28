@@ -1,5 +1,6 @@
 import httpx
-from juspay_tools.config import get_form_headers, ENDPOINTS 
+from juspay_tools.config import ENDPOINTS 
+from juspay_tools.api.utils import call
 
 async def get_customer_juspay(payload: dict) -> dict:
     """
@@ -24,22 +25,5 @@ async def get_customer_juspay(payload: dict) -> dict:
     if not customer_id:
         raise ValueError("The payload must include 'customer_id'.")
 
-    
-    headers = get_form_headers(routing_id=customer_id) 
     api_url = ENDPOINTS["customer"].format(customer_id=customer_id)
-
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        try:
-            print(f"Calling Juspay Get Customer API at: {api_url}")
-            response = await client.get(api_url, headers=headers)
-            response.raise_for_status()
-            response_data = response.json()
-            print(f"Get Customer API Response Data: {response_data}")
-            return response_data
-        except httpx.HTTPStatusError as e:
-            error_content = e.response.text if e.response is not None else "Unknown error"
-            print(f"HTTP Error calling Get Customer API: {e.status_code} - {error_content}")
-            raise Exception(f"Juspay Get Customer API Error ({e.status_code}): {error_content}") from e
-        except Exception as e:
-            print(f"Error during Get Customer API call: {e}")
-            raise Exception(f"Failed to call Juspay Get Customer API: {e}") from e
+    await call(api_url, customer_id)

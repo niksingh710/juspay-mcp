@@ -1,5 +1,6 @@
 import httpx
-from juspay_tools.config import get_json_headers, ENDPOINTS
+from juspay_tools.config import ENDPOINTS
+from juspay_tools.api.utils import post
 
 async def session_api_juspay(payload: dict) -> dict:
     """
@@ -21,27 +22,5 @@ async def session_api_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails (e.g., HTTP error, network issue, invalid input).
     """
-    
-    routing_id = payload.get("customer_id")
-    headers = get_json_headers(routing_id=routing_id)
     api_url = ENDPOINTS["session"]
-
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        try:
-            print(f"Calling Juspay Session API at: {api_url} with payload: {payload}")
-            response = await client.post(api_url, headers=headers, json=payload)
-            response.raise_for_status() 
-            response_data = response.json()
-            print(f"Session API Response Data: {response_data}")
-            return response_data
-        except httpx.HTTPStatusError as e:
-            error_content = "Unknown error"
-            try:
-                error_content = e.response.text
-            except Exception:
-                pass
-            print(f"HTTP Error calling Juspay Session API: {e.status_code} - {error_content}")
-            raise Exception(f"Juspay Session API Error ({e.status_code}): {error_content}") from e
-        except Exception as e:
-            print(f"Error during Juspay Session API call: {e}")
-            raise Exception(f"Failed to call Juspay Session API: {e}") from e
+    await post(api_url, payload)
