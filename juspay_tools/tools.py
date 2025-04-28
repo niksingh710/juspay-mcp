@@ -4,7 +4,7 @@ import inspect
 from mcp.server.lowlevel import Server
 from mcp.server.sse import SseServerTransport
 
-from juspay_tools import schema
+from juspay_tools import schema, response_schema
 from juspay_tools.api import *
 
 app = Server("juspay")
@@ -12,52 +12,37 @@ app = Server("juspay")
 AVAILABLE_TOOLS = [
     {
         "name": "session_api_juspay",
-        "description": (
-            "Creates a Juspay payment session to initiate a transaction. "
-            "Requires order details (`order_id`, `amount`), customer info (`customer_id`, `customer_email`, etc.), and `return_url`. "
-            "Returns a JSON object containing details needed to launch the payment page or SDK. "
-            "Key fields in the response typically include: `status` (session status, e.g., 'NEW'), `order_id`, `id` (Juspay session ID), "
-            "`payment_links` (object with URLs like 'web', 'iframe', 'mobile'), and potentially `sdk_payload` for mobile SDK integration."
-        ),
+        "description": f"""
+            Creates a new Juspay session for a given order and returns with below json schema:
+                {json.dumps(response_schema.session_response_schema, indent=2)}        
+        """,
         "schema": schema.juspay_session_schema,
         "handler": session.session_api_juspay
     },
     {
         "name": "order_status_api_juspay",
-        "description": (
-            "Retrieves the current status and details of a Juspay order using its `order_id`. "
-            "Returns a detailed JSON object representing the order state. "
-            "Key fields include: `order_id` (merchant's ID), `id` (Juspay's internal order ID, e.g., 'ordeh_...'), "
-            "`status` (e.g., 'CHARGED', 'PENDING_VBV', 'REFUNDED'), `amount`, `currency`, `customer_id`, `customer_email`, `customer_phone`, "
-            "`date_created`, `payment_method_type`, `payment_method`, `card` (object with card details like 'last_four_digits', 'card_brand' if applicable), "
-            "`refunded` (boolean), `amount_refunded`, and an array `refunds` containing details of any refunds processed (each object has `id`, `amount`, `unique_request_id`, `status`, `created`). "
-            "Also includes detailed `txn_detail` and `payment_gateway_response` objects."
-        ),
+        "description": f"""
+            Retrieves the status of a specific Juspay order using its `order_id` and returns with below json schema:
+                {json.dumps(response_schema.order_status_response_schema, indent=2)}
+        """,
         "schema": schema.juspay_order_status_schema,
         "handler": order_status.order_status_api_juspay
     },
     {
         "name": "create_refund_juspay",
-        "description": (
-            "Initiates a refund for a specific Juspay order. "
-            "Requires the `order_id`, a `unique_request_id` (for idempotency), and the refund `amount`. "
-            "Returns a JSON object confirming the refund initiation attempt. "
-            "Key fields typically include: `order_id`, `refund_id` (unique ID for this refund transaction, e.g., 'rfnd_...'), "
-            "`unique_request_id` (echoed back from the request), `status` (initial status, e.g., 'PENDING', 'INITIATED', 'ACCEPTED'), "
-            "`amount_refunded`, `currency`, and `created` timestamp. Note: The sample response provided in the prompt shows the *order status* after a refund, not the direct response of the refund creation POST itself."
-        ),
+        "description": f"""
+            Initiates a refund for a specific Juspay order using its `order_id` and returns with below json schema:
+                {json.dumps(response_schema.refund_creation_response_schema, indent=2)}
+        """,
         "schema": schema.juspay_refund_schema,
         "handler": refund.create_refund_juspay
     },
     {
         "name": "get_customer_juspay",
-        "description": (
-            "Retrieves details for a specific customer registered with Juspay using their `customer_id`. "
-            "Returns a JSON object containing customer information. "
-            "Key fields include: `id` (Juspay customer ID, e.g., 'cst_...'), `object` ('customer'), "
-            "`object_reference_id` (merchant's reference ID used during creation, often email or unique ID), "
-            "`mobile_number`, `email_address`, `first_name`, `last_name`, `mobile_country_code`, `date_created`, `last_updated`."
-        ),
+        "description": f""" 
+            Retrieves customer details using the Juspay customer ID and returns with below json schema:
+                {json.dumps(response_schema.get_customer_response_schema, indent=2)}
+        """,
         "schema": schema.juspay_get_customer_schema,
         "handler": customer.get_customer_juspay
     }
