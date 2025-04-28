@@ -29,7 +29,7 @@ def main(host: str, port: int, mode: str):
     # Run in HTTP/SSE mode (default)
     # Define endpoint paths.
     message_endpoint_path = "/messages/"
-    sse_endpoint_path = "/sse"
+    sse_endpoint_path = "/juspay"
     
     # Create the SSE transport handler.
     sse_transport_handler = SseServerTransport(message_endpoint_path)
