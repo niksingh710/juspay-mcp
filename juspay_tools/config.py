@@ -18,16 +18,37 @@ else:
 
 ENDPOINTS = {
     "session": f"{JUSPAY_BASE_URL}/session",
-    "order_status": f"{JUSPAY_BASE_URL}/order/status/{{order_id}}",
     "refund": f"{JUSPAY_BASE_URL}/orders/{{order_id}}/refunds", 
+
+    # Customer APIs
     "customer": f"{JUSPAY_BASE_URL}/customers/{{customer_id}}",
     "create_customer": f"{JUSPAY_BASE_URL}/customers",
     "update_customer": f"{JUSPAY_BASE_URL}/customers/{{customer_id}}",
+
+    # Order APIs
+    "order_status": f"{JUSPAY_BASE_URL}/order/status/{{order_id}}",
     "create_order": f"{JUSPAY_BASE_URL}/orders",
     "update_order": f"{JUSPAY_BASE_URL}/orders/{{order_id}}",
     "order_fulfillment": f"{JUSPAY_BASE_URL}/orders/{{order_id}}/fulfillment",
     "txn_refund": f"{JUSPAY_BASE_URL}/refunds",
     "create_txn": f"{JUSPAY_BASE_URL}/txns",
+
+    # Card APIs
+    "card_add": f"{JUSPAY_BASE_URL}/card/add",
+    "cards": f"{JUSPAY_BASE_URL}/cards",
+    "card_delete": f"{JUSPAY_BASE_URL}/card/delete",
+    "card_update": f"{JUSPAY_BASE_URL}/card/update", 
+    "card_info": f"{JUSPAY_BASE_URL}/cardbins",
+    "bin_list": f"{JUSPAY_BASE_URL}/v2/bins/eligibility",
+
+    # UPI APIs
+    "saved_payment_methods": f"{JUSPAY_BASE_URL}/customers/{{customer_id}}/payment_methods",
+    "verify_vpa": f"{JUSPAY_BASE_URL}/v2/upi/verify-vpa",
+    # Note: UPI collect and UPI intent both use the create_txn endpoint which is already defined
+
+    # Offer APIs
+    "offer_list": f"{JUSPAY_BASE_URL}/v1/offers/list",
+    "offer_order_status": f"{JUSPAY_BASE_URL}/orders/{{order_id}}",
 }
 
 def verify_env_vars():

@@ -239,3 +239,253 @@ create_txn_response_schema = {
 }
 
 create_moto_txn_response_schema = create_txn_response_schema
+
+add_card_response_schema = {
+    "type": "object",
+    "properties": {
+        "card_token": {"type": "string", "description": "Unique token for the saved card."},
+        "card_reference": {"type": "string", "description": "Card reference string for future use."},
+        "card_fingerprint": {"type": "string", "description": "Unique fingerprint of the card."}
+    },
+    "required": ["card_token", "card_reference", "card_fingerprint"]
+}
+
+list_cards_response_schema = {
+    "type": "object",
+    "properties": {
+        "customer_id": {"type": "string", "description": "Customer identifier."},
+        "merchantId": {"type": "string", "description": "Merchant identifier."},
+        "cards": {
+            "type": "array",
+            "description": "List of saved cards.",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "expired": {"type": "boolean", "description": "Whether the card has expired."},
+                    "card_issuer_country": {"type": "string", "description": "Country that issued the card."},
+                    "name_on_card": {"type": "string", "description": "Name as printed on the card."},
+                    "card_reference": {"type": "string", "description": "Card reference string."},
+                    "card_token": {"type": "string", "description": "Unique token for the saved card."},
+                    "card_issuer": {"type": "string", "description": "Bank that issued the card."},
+                    "card_brand": {"type": "string", "description": "Card brand (e.g., 'VISA', 'MASTERCARD')."},
+                    "card_number": {"type": "string", "description": "Masked card number."},
+                    "card_fingerprint": {"type": "string", "description": "Unique fingerprint of the card."},
+                    "card_type": {"type": "string", "description": "Card type (e.g., 'CREDIT', 'DEBIT')."},
+                    "token": {"type": "object", "description": "Token-related details including tokenization status."},
+                    "nickname": {"type": "string", "description": "User-assigned nickname for the card."},
+                    "card_exp_year": {"type": "string", "description": "Card expiry year."},
+                    "card_exp_month": {"type": "string", "description": "Card expiry month."}
+                }
+            }
+        }
+    },
+    "required": ["customer_id", "cards"]
+}
+
+delete_card_response_schema = {
+    "type": "object",
+    "properties": {
+        "card_token": {"type": "string", "description": "Token of the card that was deleted."},
+        "card_reference": {"type": "string", "description": "Reference of the card that was deleted."},
+        "deleted": {"type": "boolean", "description": "Whether the card was successfully deleted."}
+    },
+    "required": ["card_token", "deleted"]
+}
+
+update_card_response_schema = {
+    "type": "object",
+    "properties": {
+        "card_token": {"type": "string", "description": "Token of the card that was updated."},
+        "user_message": {"type": "string", "description": "Message describing the result of the operation."},
+        "status": {"type": "string", "description": "Status of the update operation."}
+    },
+    "required": ["card_token", "status"]
+}
+
+card_info_response_schema = {
+    "type": "object",
+    "properties": {
+        "country": {"type": "string", "description": "Country that issued the card."},
+        "extended_card_type": {"type": "string", "description": "Extended card type information."},
+        "brand": {"type": "string", "description": "Card brand (e.g., 'VISA', 'MASTERCARD')."},
+        "juspay_bank_code": {"type": "string", "description": "Juspay's internal code for the bank."},
+        "object": {"type": "string", "description": "Object type, typically 'cardbin'."},
+        "id": {"type": "string", "description": "BIN number."},
+        "card_sub_type": {"type": "string", "description": "Card subtype (e.g., 'PLATINUM', 'GOLD')."},
+        "type": {"type": "string", "description": "Card type (e.g., 'CREDIT', 'DEBIT')."},
+        "bank": {"type": "string", "description": "Bank that issued the card."}
+    },
+    "required": ["id", "brand", "type", "bank"]
+}
+
+bin_list_response_schema = {
+    "type": "object",
+    "properties": {
+        "bins": {
+            "type": "array",
+            "description": "List of BIN numbers that are eligible.",
+            "items": {"type": "string"}
+        }
+    },
+    "required": ["bins"]
+}
+
+saved_payment_methods_response_schema = {
+    "type": "object",
+    "properties": {
+        "saved_payment_methods": {
+            "type": "object",
+            "properties": {
+                "payment_method_details": {
+                    "type": "object",
+                    "properties": {
+                        "UPI_COLLECT": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "count": {"type": "integer", "description": "Number of times this VPA was used."},
+                                    "last_used": {"type": "string", "format": "date-time", "description": "When the VPA was last used."},
+                                    "vpa": {"type": "string", "description": "UPI Virtual Payment Address."}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "required": ["saved_payment_methods"]
+}
+
+upi_collect_response_schema = {
+    "type": "object",
+    "properties": {
+        "order_id": {"type": "string", "description": "Order identifier."},
+        "txn_id": {"type": "string", "description": "Transaction identifier."},
+        "status": {"type": "string", "description": "Status of the transaction (e.g., 'PENDING_VBV')."},
+        "payment": {
+            "type": "object",
+            "properties": {
+                "authentication": {
+                    "type": "object",
+                    "properties": {
+                        "method": {"type": "string", "description": "HTTP method to use for payment page."},
+                        "url": {"type": "string", "description": "URL to redirect for payment."}
+                    }
+                }
+            }
+        }
+    },
+    "required": ["order_id", "txn_id", "status", "payment"]
+}
+
+verify_vpa_response_schema = {
+    "type": "object",
+    "properties": {
+        "vpa": {"type": "string", "description": "UPI Virtual Payment Address that was verified."},
+        "status": {"type": "string", "description": "Status of the VPA (e.g., 'VALID', 'INVALID')."},
+        "mandate_details": {
+            "type": "object",
+            "properties": {
+                "is_handle_supported": {"type": "boolean", "description": "Whether mandate is supported on this VPA."}
+            }
+        },
+        "customer_name": {"type": "string", "description": "Name of the customer associated with the VPA."}
+    },
+    "required": ["vpa", "status"]
+}
+
+upi_intent_response_schema = {
+    "type": "object",
+    "properties": {
+        "txn_uuid": {"type": "string", "description": "Unique transaction identifier."},
+        "txn_id": {"type": "string", "description": "Transaction identifier."},
+        "status": {"type": "string", "description": "Status of the transaction (e.g., 'PENDING_VBV')."},
+        "payment": {
+            "type": "object",
+            "properties": {
+                "sdk_params": {
+                    "type": "object",
+                    "properties": {
+                        "tr": {"type": "string", "description": "Transaction reference."},
+                        "tid": {"type": "string", "description": "Transaction ID."},
+                        "merchant_vpa": {"type": "string", "description": "Merchant's UPI VPA."},
+                        "merchant_name": {"type": "string", "description": "Merchant name."},
+                        "mcc": {"type": "string", "description": "Merchant category code."},
+                        "amount": {"type": "string", "description": "Amount of the transaction."}
+                    }
+                },
+                "authentication": {
+                    "type": "object",
+                    "properties": {
+                        "url": {"type": "string", "description": "URL to redirect for payment."},
+                        "method": {"type": "string", "description": "HTTP method to use for payment page."}
+                    }
+                }
+            }
+        },
+        "order_id": {"type": "string", "description": "Order identifier."}
+    },
+    "required": ["txn_id", "status", "payment", "order_id"]
+}
+
+list_offers_response_schema = {
+    "type": "object",
+    "properties": {
+        "offers": {
+            "type": "array",
+            "description": "List of available offers.",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "offer_rules": {"type": "object", "description": "Rules defining when the offer applies."},
+                    "order_breakup": {
+                        "type": "object",
+                        "description": "Breakdown of order amount after offer application.",
+                        "properties": {
+                            "final_order_amount": {"type": "string", "description": "Final amount after offer application."},
+                            "offer_amount": {"type": "string", "description": "Total offer amount."},
+                            "order_amount": {"type": "string", "description": "Original order amount."},
+                            "applicable_order_amount": {"type": "string", "description": "Amount eligible for offer."},
+                            "discount_amount": {"type": "string", "description": "Discount amount."},
+                            "benefits": {"type": "array", "description": "Details of benefits provided by the offer."}
+                        }
+                    },
+                    "offer_id": {"type": "string", "description": "Unique identifier for the offer."},
+                    "status": {"type": "string", "description": "Offer eligibility status (e.g., 'ELIGIBLE')."},
+                    "offer_code": {"type": "string", "description": "Offer code."},
+                    "eligible_saved_payment_methods": {"type": "array", "description": "Payment methods eligible for this offer."}
+                }
+            }
+        },
+        "best_offer_combinations": {
+            "type": "array",
+            "description": "Best combinations of offers that can be applied together."
+        }
+    }
+}
+
+offer_order_status_response_schema = {
+    "type": "object",
+    "properties": {
+        "status": {"type": "string", "description": "Order status (e.g., 'CHARGED')."},
+        "id": {"type": "string", "description": "Juspay's unique identifier for the order."},
+        "order_id": {"type": "string", "description": "Merchant's order identifier."},
+        "amount": {"type": "number", "description": "Order amount."},
+        "offers": {
+            "type": "array",
+            "description": "Applied offers for this order.",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "offer_id": {"type": "string", "description": "Unique identifier for the offer."},
+                    "offer_code": {"type": "string", "description": "Offer code."},
+                    "status": {"type": "string", "description": "Offer application status (e.g., 'AVAILED')."},
+                    "benefits": {"type": "array", "description": "Benefits provided by this offer."}
+                }
+            }
+        },
+        "effective_amount": {"type": "number", "description": "Effective amount after offers."}
+    }
+}

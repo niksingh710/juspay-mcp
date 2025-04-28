@@ -1,8 +1,11 @@
 import httpx
 from juspay_tools.config import get_json_headers
 
-async def call(api_url: str, customer_id: str | None = None) -> dict:
-    headers = get_json_headers(routing_id=customer_id) 
+async def call(api_url: str, customer_id: str | None = None, additional_headers: dict = None) -> dict:
+    headers = get_json_headers(routing_id=customer_id)
+    
+    if additional_headers:
+        headers.update(additional_headers)
 
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
