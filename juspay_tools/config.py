@@ -21,6 +21,13 @@ ENDPOINTS = {
     "order_status": f"{JUSPAY_BASE_URL}/order/status/{{order_id}}",
     "refund": f"{JUSPAY_BASE_URL}/orders/{{order_id}}/refunds", 
     "customer": f"{JUSPAY_BASE_URL}/customers/{{customer_id}}",
+    "create_customer": f"{JUSPAY_BASE_URL}/customers",
+    "update_customer": f"{JUSPAY_BASE_URL}/customers/{{customer_id}}",
+    "create_order": f"{JUSPAY_BASE_URL}/orders",
+    "update_order": f"{JUSPAY_BASE_URL}/orders/{{order_id}}",
+    "order_fulfillment": f"{JUSPAY_BASE_URL}/orders/{{order_id}}/fulfillment",
+    "txn_refund": f"{JUSPAY_BASE_URL}/refunds",
+    "create_txn": f"{JUSPAY_BASE_URL}/txns",
 }
 
 def verify_env_vars():

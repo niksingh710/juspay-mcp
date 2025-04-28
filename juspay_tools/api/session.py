@@ -23,4 +23,4 @@ async def session_api_juspay(payload: dict) -> dict:
         Exception: If the API call fails (e.g., HTTP error, network issue, invalid input).
     """
     api_url = ENDPOINTS["session"]
-    await post(api_url, payload)
+    return await post(api_url, payload)

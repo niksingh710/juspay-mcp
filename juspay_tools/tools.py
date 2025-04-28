@@ -26,7 +26,7 @@ AVAILABLE_TOOLS = [
                 {json.dumps(response_schema.order_status_response_schema, indent=2)}
         """,
         "schema": schema.juspay_order_status_schema,
-        "handler": order_status.order_status_api_juspay
+        "handler": order.order_status_api_juspay
     },
     {
         "name": "create_refund_juspay",
@@ -35,7 +35,7 @@ AVAILABLE_TOOLS = [
                 {json.dumps(response_schema.refund_creation_response_schema, indent=2)}
         """,
         "schema": schema.juspay_refund_schema,
-        "handler": refund.create_refund_juspay
+        "handler": order.create_refund_juspay
     },
     {
         "name": "get_customer_juspay",
@@ -45,6 +45,60 @@ AVAILABLE_TOOLS = [
         """,
         "schema": schema.juspay_get_customer_schema,
         "handler": customer.get_customer_juspay
+    },
+    {
+        "name": "create_customer_juspay",
+        "description": f"""
+            Creates a new customer in Juspay with the provided details and returns with below json schema:
+                {json.dumps(response_schema.create_customer_response_schema, indent=2)}
+        """,
+        "schema": schema.juspay_create_customer_schema,
+        "handler": customer.create_customer_juspay
+    },
+    {
+        "name": "update_customer_juspay",
+        "description": f"""
+            Updates an existing customer in Juspay with the provided details and returns with below json schema:
+                {json.dumps(response_schema.update_customer_response_schema, indent=2)}
+        """,
+        "schema": schema.juspay_update_customer_schema,
+        "handler": customer.update_customer_juspay
+    },
+    {
+        "name": "order_fulfillment_sync_juspay",
+        "description": f"""
+            Updates the fulfillment status of a Juspay order and returns with below json schema:
+                {json.dumps(response_schema.order_fulfillment_response_schema, indent=2)}
+        """,
+        "schema": schema.juspay_order_fulfillment_schema,
+        "handler": order.order_fulfillment_sync
+    },
+    {
+        "name": "create_txn_refund_juspay",
+        "description": f"""
+            Initiates a refund based on transaction ID (instead of order ID) and returns with below json schema:
+                {json.dumps(response_schema.txn_refund_response_schema, indent=2)}
+        """,
+        "schema": schema.juspay_txn_refund_schema,
+        "handler": order.create_txn_refund_juspay
+    },
+    {
+        "name": "create_txn_juspay",
+        "description": f"""
+            Creates an order and processes payment in a single API call and returns with below json schema:
+                {json.dumps(response_schema.create_txn_response_schema, indent=2)}
+        """,
+        "schema": schema.juspay_create_txn_schema,
+        "handler": order.create_txn_juspay
+    },
+    {
+        "name": "create_moto_txn_juspay",
+        "description": f"""
+            Creates an order with MOTO (Mail Order/Telephone Order) authentication and returns with below json schema:
+                {json.dumps(response_schema.create_moto_txn_response_schema, indent=2)}
+        """,
+        "schema": schema.juspay_create_moto_txn_schema,
+        "handler": order.create_moto_txn_juspay
     }
 ]
 

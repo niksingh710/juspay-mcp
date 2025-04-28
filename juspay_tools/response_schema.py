@@ -104,3 +104,138 @@ get_customer_response_schema = {
     },
     "required": ["id", "object", "object_reference_id", "date_created", "last_updated"]
 }
+
+create_customer_response_schema = get_customer_response_schema
+update_customer_response_schema = get_customer_response_schema
+
+create_order_response_schema = {
+    "type": "object",
+    "properties": {
+        "status_id": {"type": "integer", "description": "Numeric status identifier (e.g., 10 for NEW)."},
+        "status": {"type": "string", "description": "Order status (e.g., 'NEW')."},
+        "payment_links": {
+            "type": "object",
+            "properties": {
+                "web": {"type": "string", "description": "URL for web payment."},
+                "mobile": {"type": "string", "description": "URL for mobile payment."},
+                "iframe": {"type": "string", "description": "URL for iframe payment."}
+            }
+        },
+        "order_id": {"type": "string", "description": "Merchant's order identifier."},
+        "merchant_id": {"type": "string", "description": "Merchant identifier."},
+        "juspay": {
+            "type": "object",
+            "properties": {
+                "client_auth_token_expiry": {"type": "string", "description": "Expiry time of client auth token."},
+                "client_auth_token": {"type": "string", "description": "Client authentication token."}
+            }
+        },
+        "id": {"type": "string", "description": "Juspay's unique identifier for the order."},
+        "date_created": {"type": "string", "description": "Order creation timestamp."},
+        "customer_phone": {"type": "string", "description": "Customer's phone number."},
+        "customer_id": {"type": "string", "description": "Customer identifier."},
+        "customer_email": {"type": "string", "description": "Customer's email address."},
+        "currency": {"type": "string", "description": "Order currency code (e.g., 'INR')."},
+        "amount": {"type": "number", "description": "Order amount."},
+        "amount_refunded": {"type": "number", "description": "Refunded amount."},
+        "refunded": {"type": "boolean", "description": "Whether the order has been refunded."}
+    }
+}
+
+update_order_response_schema = {
+    "type": "object",
+    "properties": {
+        "customer_email": {"type": "string", "description": "Customer's email address."},
+        "customer_phone": {"type": "string", "description": "Customer's phone number."},
+        "customer_id": {"type": "string", "description": "Customer identifier."},
+        "status_id": {"type": "integer", "description": "Numeric status identifier."},
+        "status": {"type": "string", "description": "Order status (e.g., 'NEW')."},
+        "id": {"type": "string", "description": "Juspay's unique identifier for the order."},
+        "merchant_id": {"type": "string", "description": "Merchant identifier."},
+        "amount": {"type": "number", "description": "Updated order amount."},
+        "currency": {"type": "string", "description": "Order currency code."},
+        "order_id": {"type": "string", "description": "Merchant's order identifier."},
+        "date_created": {"type": "string", "description": "Order creation timestamp."},
+        "return_url": {"type": "string", "description": "URL to redirect after payment."},
+        "payment_links": {
+            "type": "object",
+            "properties": {
+                "iframe": {"type": "string", "description": "URL for iframe payment."},
+                "web": {"type": "string", "description": "URL for web payment."},
+                "mobile": {"type": "string", "description": "URL for mobile payment."}
+            }
+        },
+        "refunded": {"type": "boolean", "description": "Whether the order has been refunded."},
+        "amount_refunded": {"type": "number", "description": "Refunded amount."},
+        "effective_amount": {"type": "number", "description": "Effective amount after discounts."}
+    }
+}
+
+order_fulfillment_response_schema = {
+    "type": "object",
+    "properties": {
+        "status": {"type": "string", "description": "Status of the fulfillment operation (e.g., 'SUCCESS')."},
+        "merchant_id": {"type": "string", "description": "Merchant identifier."},
+        "order_id": {"type": "string", "description": "Order identifier for which fulfillment was updated."},
+        "commands": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "status": {"type": "string", "description": "Status of the command execution."},
+                    "metadata": {"type": "string", "description": "Any metadata provided with the fulfillment."},
+                    "date_created": {"type": "string", "description": "When the command was executed."},
+                    "command": {"type": "string", "description": "The executed command (e.g., 'NO_ACTION')."}
+                }
+            }
+        }
+    }
+}
+
+txn_refund_response_schema = {
+    "type": "object",
+    "properties": {
+        "unique_request_id": {"type": "string", "description": "Unique identifier for this refund request."},
+        "txn_id": {"type": "string", "description": "Transaction ID that was refunded."},
+        "status": {"type": "string", "description": "Status of the refund (e.g., 'PENDING')."},
+        "sent_to_gateway": {"type": "boolean", "description": "Whether the refund was sent to the payment gateway."},
+        "response_code": {"type": "string", "description": "Response code from the payment gateway, if any."},
+        "refund_type": {"type": "string", "description": "Type of refund (e.g., 'STANDARD')."},
+        "refund_source": {"type": "string", "description": "Source of the refund (e.g., 'RAZORPAY')."},
+        "order_id": {"type": "string", "description": "ID of the order that was refunded."},
+        "initiated_by": {"type": "string", "description": "Who initiated the refund (e.g., 'API')."},
+        "created": {"type": "string", "description": "Timestamp when the refund was created."},
+        "amount": {"type": "number", "description": "Amount that was refunded."}
+    }
+}
+
+create_txn_response_schema = {
+    "type": "object",
+    "properties": {
+        "order_id": {"type": "string", "description": "Order identifier."},
+        "status": {"type": "string", "description": "Status of the transaction (e.g., 'PENDING_VBV', 'AUTHORIZED')."},
+        "payment": {
+            "type": "object",
+            "properties": {
+                "authentication": {
+                    "type": "object",
+                    "properties": {
+                        "url": {"type": "string", "description": "URL for any required authentication steps."},
+                        "method": {"type": "string", "description": "HTTP method to use for authentication."}
+                    }
+                }
+            }
+        },
+        "txn_uuid": {"type": "string", "description": "Unique transaction identifier."},
+        "offer_details": {
+            "type": "object",
+            "properties": {
+                "offers": {"type": "array", "description": "List of applicable offers."}
+            }
+        },
+        "txn_id": {"type": "string", "description": "Transaction identifier."},
+        "merchant_return_url": {"type": "string", "description": "URL where the customer will be redirected after payment."}
+    }
+}
+
+create_moto_txn_response_schema = create_txn_response_schema
