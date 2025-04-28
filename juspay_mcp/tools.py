@@ -4,8 +4,8 @@ import inspect
 from mcp.server.lowlevel import Server
 from mcp.server.sse import SseServerTransport
 
-from juspay_tools import schema, response_schema
-from juspay_tools.api import *
+from juspay_mcp import schema, response_schema
+from juspay_mcp.api import *
 
 app = Server("juspay")
 

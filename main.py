@@ -7,7 +7,7 @@ import asyncio
 from starlette.applications import Starlette
 from starlette.routing import Mount, Route
 from mcp.server.sse import SseServerTransport
-from juspay_tools.tools import app
+from juspay_mcp.tools import app
 from stdio import run_stdio
 
 # Load environment variables.

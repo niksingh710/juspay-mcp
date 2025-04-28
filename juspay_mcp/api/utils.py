@@ -1,5 +1,5 @@
 import httpx
-from juspay_tools.config import get_json_headers
+from juspay_mcp.config import get_json_headers
 
 async def call(api_url: str, customer_id: str | None = None, additional_headers: dict = None) -> dict:
     headers = get_json_headers(routing_id=customer_id)

@@ -1,6 +1,6 @@
 import httpx
-from juspay_tools.config import ENDPOINTS 
-from juspay_tools.api.utils import call, post
+from juspay_mcp.config import ENDPOINTS 
+from juspay_mcp.api.utils import call, post
 
 async def order_status_api_juspay(payload: dict) -> dict:
     """
