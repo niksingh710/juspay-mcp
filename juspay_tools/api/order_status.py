@@ -1,31 +1,37 @@
 import httpx
-from juspay_tools.config import get_json_headers, ENDPOINTS
+from juspay_tools.config import get_json_headers, ENDPOINTS 
 
 async def order_status_api_juspay(payload: dict) -> dict:
     """
-    Calls the Juspay Order Status API securely using httpx with a GET request.
-    
-    This function sends an HTTP GET request to the Juspay Order Status endpoint,
-    appending the 'order_id' from the payload to the URL.
-    
+    Retrieves the status of a specific Juspay order using the order_id.
+
+    This function sends an HTTP GET request to the Juspay Order Status endpoint.
+    The 'order_id' from the payload is appended to the URL. If 'customer_id'
+    is present in the payload, it's used for the routing_id header.
+
     Args:
-        payload (dict): A dictionary with the required key "order_id".
-    
+        payload (dict): Must include:
+            - order_id (str): Unique identifier of the order to check.
+        May include:
+            - customer_id (str, optional): If provided, used for the x-routing-id header.
+
     Returns:
-        dict: The parsed JSON response from the Juspay Order Status API.
-    
+        dict: Parsed JSON response from the Juspay Order Status API, containing details
+              about the order, such as its status.
+
     Raises:
-        Exception: If the API call fails.
+        ValueError: If 'order_id' is missing in the payload.
+        Exception: If the API call fails (e.g., HTTP error, network issue).
     """
     order_id = payload.get("order_id")
     if not order_id:
         raise ValueError("The payload must include 'order_id'.")
-    
-    routing_id = payload.get("customer_id", "default_routing_id")
-    headers = get_json_headers(routing_id)
+
+    routing_id = payload.get("customer_id")
+    headers = get_json_headers(routing_id=routing_id) 
 
     api_url = ENDPOINTS["order_status"].format(order_id=order_id)
-    
+
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
             print(f"Calling Juspay Order Status API at: {api_url}")

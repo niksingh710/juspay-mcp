@@ -29,15 +29,21 @@ pip install .
 
 ## Configuration
 
-Before using the package, you need to set up your Juspay API credentials. Create a .env file in your working directory with the following variables:
+Before using the package, you need to set up your Juspay API credentials and environment. Create a `.env` file in your working directory with the following variables:
 
-```
+```dotenv
+# Required Juspay Credentials
 JUSPAY_API_KEY=your_juspay_api_key
 JUSPAY_MERCHANT_ID=your_juspay_merchant_id
-JUSPAY_SANDBOX_BASE_URL=https://sandbox.juspay.in
-JUSPAY_PROD_BASE_URL=https://api.juspay.in
-```
 
+# Optional: Specify the Juspay Environment
+# Set to "production" to use live API endpoints, otherwise defaults to "sandbox"
+JUSPAY_ENV=sandbox
+
+# Optional: Override Base URLs if needed (defaults are usually sufficient)
+# JUSPAY_SANDBOX_BASE_URL=https://sandbox.juspay.in
+# JUSPAY_PROD_BASE_URL=https://api.juspay.in
+```
 ## Usage
 
 ### Starting the Server
