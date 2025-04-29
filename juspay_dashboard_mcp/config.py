@@ -5,6 +5,7 @@ import dotenv
 dotenv.load_dotenv()
 
 JUSPAY_ENV = os.getenv("JUSPAY_ENV", "sandbox").lower() 
+JUSPAY_WEB_LOGIN_TOKEN = os.getenv("JUSPAY_WEB_LOGIN_TOKEN")
 
 if JUSPAY_ENV == "production":
     JUSPAY_BASE_URL = os.getenv("JUSPAY_PROD_BASE_URL", "https://euler-x.internal.svc.k8s.mum.juspay.net")
@@ -19,9 +20,13 @@ ENDPOINTS = {
 }
 
 def verify_env_vars():
-    """Verifies that required environment variables are set."""
-    pass
+    """ 
+    Verifies that all required environment variables are set.
+    """
 
+    if not JUSPAY_WEB_LOGIN_TOKEN:
+        raise ValueError("JUSPAY_WEB_LOGIN_TOKEN environment variable must be set.")
+    
 def get_base64_auth():
     """Returns the base64 encoded auth string."""
     pass
@@ -38,6 +43,6 @@ def get_common_headers(payload: dict):
         "accept": "*/*",
         "x-request-id": f"mcp-tool-{os.urandom(6).hex()}",
         "x-tenant-id": payload.pop("tenant_id", None),
-        "x-web-logintoken": payload.pop("web_login_str"),
+        "x-web-logintoken": JUSPAY_WEB_LOGIN_TOKEN,
         "cookie": payload.pop("cookie", None),
     }

@@ -18,7 +18,6 @@ async def get_offer_details_juspay(payload: dict) -> dict:
 
     Headers include:
         - x-tenant-id from payload
-        - x-web-logintoken from payload
         - content-type: application/json
 
     Args:
@@ -42,7 +41,7 @@ async def get_offer_details_juspay(payload: dict) -> dict:
     merchant_id = payload.get("merchantId", "")
     is_batch = "true" if payload.get("isBatch", False) else "false"
 
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/offers/dashboard/uploads/{offer_id}?is_batch={is_batch}"
     
     if merchant_id:
@@ -68,7 +67,6 @@ async def list_offers_juspay(payload: dict) -> dict:
 
     Headers include:
         - x-tenant-id from payload
-        - x-web-logintoken from payload
         - content-type: application/json
 
     Args:
@@ -88,7 +86,7 @@ async def list_offers_juspay(payload: dict) -> dict:
         raise ValueError("Payload must contain 'merchant_id', 'start_time', and 'end_time'.")
 
     merchant_id = payload.get("merchant_id")
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/offers/dashboard/dashboard-list?merchant_id={merchant_id}"
     
     return await post(api_url, payload)

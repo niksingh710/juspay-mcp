@@ -19,7 +19,6 @@ async def list_configured_gateways_juspay(payload: dict) -> dict:
 
     Headers include:
         - x-tenant-id from payload
-        - x-web-logintoken from payload
         - content-type: application/json
 
     Args:
@@ -32,7 +31,7 @@ async def list_configured_gateways_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails.
     """
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v1/gateway/list"
     return await post(api_url, payload)
 
@@ -50,7 +49,6 @@ async def get_gateway_scheme_juspay(payload: dict) -> dict:
 
     Headers include:
         - x-tenant-id from payload
-        - x-web-logintoken from payload
         - content-type: application/json
 
     Args:
@@ -69,7 +67,7 @@ async def get_gateway_scheme_juspay(payload: dict) -> dict:
     if not gateway:
         raise ValueError("The payload must include 'gateway'.")
 
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v2/gateway/scheme/{gateway}"
 
     body = {}
@@ -90,7 +88,6 @@ async def get_gateway_details_juspay(payload: dict) -> dict:
 
     Headers include:
         - x-tenant-id from payload
-        - x-web-logintoken from payload
         - content-type: application/json
 
     Args:
@@ -109,7 +106,7 @@ async def get_gateway_details_juspay(payload: dict) -> dict:
     if not mga_id or not merchant_id:
         raise ValueError("The payload must include 'mga_id' and 'merchantId'.")
 
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v1/gateway/{mga_id}"
 
     body = {"merchantId": merchant_id}
@@ -128,7 +125,6 @@ async def list_gateway_scheme_juspay(payload: dict) -> dict:
 
     Headers include:
         - x-tenant-id from payload
-        - x-web-logintoken from payload
         - content-type: application/json
 
     Returns:
@@ -137,7 +133,7 @@ async def list_gateway_scheme_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails.
     """
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v2/gateway/scheme/list"
     return await post(api_url, {})
 
@@ -165,7 +161,7 @@ async def get_gateway_downtime(payload: dict) -> dict:
         raise ValueError("The payload must include 'order_id' and 'merchant_id'.")
 
     # Assume config.API_ENDPOINTS["gateway_downtime"] gives the base URL
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v1/gateway/downtime"
 
     body = {
@@ -190,7 +186,7 @@ async def get_merchant_gateways_pm_details_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails.
     """
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v1/gateway/paymentMethods"
     return await post(api_url, {})
 

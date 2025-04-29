@@ -9,7 +9,4 @@ class WithHeaders(BaseModel):
         ...,
         description="Tenant identifier for multi-tenant environments."
     )
-    web_login_str: str = Field(
-        ...,
-        description="Web login string for frontend-user context."
-    )
+    # web_login_str field removed - now using environment variable instead

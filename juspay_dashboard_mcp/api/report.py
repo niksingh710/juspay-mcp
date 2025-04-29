@@ -19,7 +19,6 @@ async def report_details_juspay(payload: dict) -> dict:
 
     Headers include:
         - x-tenant-id from payload
-        - x-web-logintoken from payload
         - content-type: application/json
 
     Args:
@@ -40,7 +39,7 @@ async def report_details_juspay(payload: dict) -> dict:
     if not task_uid or not user_name:
         raise ValueError("The payload must include 'task_uid' and 'user_name'.")
 
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/monitoring/task?task_uid={task_uid}&user_name={user_name}"
     
     # Empty body since parameters are in URL
@@ -61,7 +60,6 @@ async def list_report_juspay(payload: dict) -> dict:
 
     Headers include:
         - x-tenant-id from payload
-        - x-web-logintoken from payload
         - content-type: application/json
 
     Args:
@@ -80,7 +78,7 @@ async def list_report_juspay(payload: dict) -> dict:
     if "merchantId" not in payload or payload.get("task_type") != "report":
         raise ValueError("Payload must contain 'merchantId' and 'task_type' must be 'report'.")
     
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/monitoring/task/list"
     
     return await post(api_url, payload)

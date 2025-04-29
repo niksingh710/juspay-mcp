@@ -17,7 +17,6 @@ async def get_user_juspay(payload: dict) -> dict:
 
     Headers include:
         - x-tenant-id from payload
-        - x-web-logintoken from payload
         - content-type: application/json
 
     Args:
@@ -34,7 +33,7 @@ async def get_user_juspay(payload: dict) -> dict:
     if "userId" not in payload:
         raise ValueError("Payload must contain 'userId'.")
 
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v1/user?userId={payload['userId']}"
     return await post(api_url, {})
 
@@ -49,7 +48,6 @@ async def get_user_details_juspay(payload: dict) -> dict:
 
     Headers include:
         - x-tenant-id from payload
-        - x-web-logintoken from payload
         - content-type: application/json
 
     Args:
@@ -66,7 +64,7 @@ async def get_user_details_juspay(payload: dict) -> dict:
     if not payload.get("userId"):
         raise ValueError("'userId' is required in the payload")
 
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v2/user/{payload['userId']}"
     return await post(api_url, {})
 
@@ -82,7 +80,6 @@ async def list_users_v2_juspay(payload: dict) -> dict:
 
     Headers include:
         - x-tenant-id from payload
-        - x-web-logintoken from payload
         - content-type: application/json
 
     Args:
@@ -95,7 +92,7 @@ async def list_users_v2_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails.
     """
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v2/user/list"
     
     request_data = {

@@ -16,7 +16,6 @@ async def get_conflict_settings_juspay(payload: dict) -> dict:
 
     Headers include:
         - x-tenant-id from payload
-        - x-web-logintoken from payload
         - content-type: application/json
 
     Args:
@@ -28,7 +27,7 @@ async def get_conflict_settings_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails.
     """
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v1/conflict"
     return await post(api_url, {})
 
@@ -42,8 +41,7 @@ async def get_general_settings_juspay(payload: dict) -> dict:
     The call uses an empty request body.
 
     Headers include:
-        - x-tenant-id from payload
-        - x-web-logintoken from payload
+        - x-tenant-id from payload     
         - content-type: application/json
 
     Args:
@@ -55,7 +53,7 @@ async def get_general_settings_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails.
     """
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v1/general"
     return await post(api_url, {})
 
@@ -70,8 +68,7 @@ async def get_mandate_settings_juspay(payload: dict) -> dict:
         - merchantId: Optional merchant ID
 
     Headers include:
-        - x-tenant-id from payload
-        - x-web-logintoken from payload
+        - x-tenant-id from payload       
         - content-type: application/json
 
     Args:
@@ -84,7 +81,7 @@ async def get_mandate_settings_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails.
     """
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v1/mandate"
     
     request_data = {}
@@ -104,8 +101,7 @@ async def get_priority_logic_settings_juspay(payload: dict) -> dict:
     The call uses an empty request body.
 
     Headers include:
-        - x-tenant-id from payload
-        - x-web-logintoken from payload
+        - x-tenant-id from payload    
         - content-type: application/json
 
     Args:
@@ -117,7 +113,7 @@ async def get_priority_logic_settings_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails.
     """
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v1/priorityLogic"
     return await post(api_url, {})
 
@@ -132,8 +128,7 @@ async def get_routing_settings_juspay(payload: dict) -> dict:
     The call uses an empty request body.
 
     Headers include:
-        - x-tenant-id from payload
-        - x-web-logintoken from payload
+        - x-tenant-id from payload        
         - content-type: application/json
 
     Args:
@@ -145,7 +140,7 @@ async def get_routing_settings_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails.
     """
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v1/routing"
     return await post(api_url, {})
 
@@ -159,8 +154,7 @@ async def get_webhook_settings_juspay(payload: dict) -> dict:
     The call uses an empty request body.
 
     Headers include:
-        - x-tenant-id from payload
-        - x-web-logintoken from payload
+        - x-tenant-id from payload     
         - content-type: application/json
 
     Args:
@@ -172,6 +166,6 @@ async def get_webhook_settings_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails.
     """
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v1/webhook"
     return await post(api_url, {})

@@ -15,7 +15,6 @@ async def list_surcharge_rules_juspay(payload: dict) -> dict:
 
     Headers include:
         - x-tenant-id from environment variable
-        - x-web-logintoken from environment variable
         - content-type: application/json
 
     Returns:
@@ -24,6 +23,6 @@ async def list_surcharge_rules_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails.
     """
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v1/rule/list"
     return await post(api_url, {})

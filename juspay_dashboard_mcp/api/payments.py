@@ -20,7 +20,7 @@ async def list_payment_links_v1_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails.
     """
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v1/paymentLinks/list"
     request_data = {
         "qFilters": {

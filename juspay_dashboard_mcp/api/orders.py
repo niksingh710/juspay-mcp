@@ -77,7 +77,7 @@ async def list_orders_v4_juspay(payload: dict) -> dict:
     if payload.get("orderType"):
         request_data["qFilters"]["and"]["order_type"] = payload["orderType"]
 
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}ec/v4/orders"
     return await post(api_url, request_data)
 
@@ -99,7 +99,7 @@ async def get_order_details_juspay(payload: dict) -> dict:
     if not order_id:
         raise ValueError("'order_id' is required in the payload")
 
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v1/orders/{order_id}"
     return await post(api_url, {})
 
@@ -111,7 +111,7 @@ async def list_payout_orders_juspay(payload: dict) -> dict:
         raise ValueError("Payload must contain 'createdAt.lte' and 'createdAt.gte'.")
 
     query_params = {k: v for k, v in payload.items() if v is not None}
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/payout/batch/dashboard/v1/orders?{urlencode(query_params)}"
     # This endpoint is a GET request
     return await post(api_url, method="GET")
@@ -133,7 +133,7 @@ async def payout_order_details_juspay(payload: dict) -> dict:
     if not order_id:
         raise ValueError("Payload must contain 'orderId'.")
 
-    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    host = await get_juspay_host_from_api()
     api_url = f"{host}api/payout/batch/dashboard/v1/orders/{order_id}?expand=fulfillment,payment,refund"
     # This endpoint is a GET request
     return await post(api_url, method="GET")

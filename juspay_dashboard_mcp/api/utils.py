@@ -44,16 +44,15 @@ async def post(api_url: str, payload: dict) -> dict:
             raise Exception(f"Failed to call Juspay API: {e}") from e
         
 
-async def get_juspay_host_from_api(token: str, headers: dict = None) -> str:
+async def get_juspay_host_from_api(token: str = None, headers: dict = None) -> str:
     """
-    Calls the Juspay validate token API, checks the parentEntityContext in the response,
-    and returns the appropriate host URL.
-
-    Args:
-        token (str): The token to validate.
+    Returns the appropriate Juspay host URL based on the environment.
+    
+    Note: Previously this validated the token, but now uses JUSPAY_WEB_LOGIN_TOKEN 
+    environment variable directly. The token parameter is kept for backward compatibility.
 
     Returns:
-        str: The selected host URL based on parentEntityContext.
+        str: The Juspay host URL.
     """
     return "https://portal.juspay.in/"
     # api_url = "https://portal.juspay.in/api/ec/v1/validate/token"
