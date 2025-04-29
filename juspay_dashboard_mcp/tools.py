@@ -4,14 +4,21 @@ import inspect
 from mcp.server.lowlevel import Server
 from mcp.server.sse import SseServerTransport
 
-from juspay_mcp import response_schema
-from juspay_mcp.api import *
-import juspay_mcp.api_schema as api_schema
-import juspay_mcp.utils as util
+from juspay_dashboard_mcp import response_schema
+from juspay_dashboard_mcp.api import *
+import juspay_dashboard_mcp.api_schema as api_schema
+import juspay_dashboard_mcp.utils as util
 
 app = Server("juspay-dashboard")
 
 AVAILABLE_TOOLS = [
+    util.make_api_config(
+        name="juspay_list_configured_gateway",
+        description="This API gets all the configured gateways for the given merchan",
+        model=api_schema.gateway.JuspayListConfiguredGatewaysPayload,
+        handler=gateway.list_configured_gateways_juspay,
+        response_schema=None,
+    ),
 ]
 
 @app.list_tools()

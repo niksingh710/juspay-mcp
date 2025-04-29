@@ -15,6 +15,7 @@ else:
 
 
 ENDPOINTS = {
+    "list_configured_gateways": ""
 }
 
 def verify_env_vars():

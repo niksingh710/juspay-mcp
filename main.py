@@ -7,7 +7,10 @@ import asyncio
 from starlette.applications import Starlette
 from starlette.routing import Mount, Route
 from mcp.server.sse import SseServerTransport
-from juspay_mcp.tools import app
+if os.getenv("JUSPAY_MCP_TYPE") == "DASHBOARD":
+    from juspay_dashboard_mcp.tools import app
+else:
+    from juspay_mcp.tools import app
 from stdio import run_stdio
 
 # Load environment variables.
@@ -29,7 +32,11 @@ def main(host: str, port: int, mode: str):
     # Run in HTTP/SSE mode (default)
     # Define endpoint paths.
     message_endpoint_path = "/messages/"
-    sse_endpoint_path = "/juspay"
+    if os.getenv("JUSPAY_MCP_TYPE") == "DASHBOARD":
+        sse_endpoint_path = "/juspay-dashboard"
+    else:
+        sse_endpoint_path = "/juspay"
+
     
     # Create the SSE transport handler.
     sse_transport_handler = SseServerTransport(message_endpoint_path)
