@@ -121,7 +121,7 @@ AVAILABLE_TOOLS = [
         name="juspay_list_surcharge_rules",
         description="No input required. Returns a list of all configured surcharge rules, including their current status and rule definitions.",
         model=api_schema.surcharge.JuspayListSurchargeRulesPayload,
-        handler=surcharger.list_surcharge_rules_juspay,
+        handler=surcharge.list_surcharge_rules_juspay,
         response_schema=None,
     ),
 ]
