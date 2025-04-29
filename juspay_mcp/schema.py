@@ -32,26 +32,6 @@ juspay_order_status_schema = {
    }
 }
 
-juspay_refund_schema = {
-    "type": "object",
-    "required": ["order_id", "unique_request_id", "amount"],
-    "properties": {
-        "order_id": {
-            "type": "string",
-            "description": "Unique identifier of the order to refund."
-        },
-        "unique_request_id": {
-            "type": "string",
-            "description": "Unique refund request identifier (e.g., 'xyz123')."
-        },
-        "amount": {
-            "type": "string",
-            "description": "Refund amount as a string (e.g., '100.00')."
-        }
-    },
-}
-
-
 juspay_get_customer_schema = {
     "type": "object",
     "required": ["customer_id"],
@@ -272,29 +252,6 @@ juspay_order_fulfillment_schema = {
         "fulfillment_data": {
             "type": "string",
             "description": "Optional metadata for the fulfillment."
-        },
-        "routing_id": {
-            "type": "string",
-            "description": "Optional custom routing ID for the API request. We recommend passing the customer_id as the x-routing-id. If the customer is checking out as a guest, you can pass an alternative ID that helps track the payment session lifecycle. For example, this could be an Order ID or Cart ID."
-        }
-    }
-}
-
-juspay_txn_refund_schema = {
-    "type": "object",
-    "required": ["txn_id", "unique_request_id", "amount"],
-    "properties": {
-        "txn_id": {
-            "type": "string",
-            "description": "Transaction ID to be refunded (e.g., 'merchant_id-order_id-1')."
-        },
-        "unique_request_id": {
-            "type": "string",
-            "description": "Unique identifier for this refund request."
-        },
-        "amount": {
-            "type": "string",
-            "description": "Refund amount as a string (e.g., '100.00')."
         },
         "routing_id": {
             "type": "string",

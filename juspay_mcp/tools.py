@@ -30,15 +30,13 @@ AVAILABLE_TOOLS = [
         "schema": schema.juspay_order_status_schema,
         "handler": order.order_status_api_juspay
     },
-    {
-        "name": "create_refund_juspay",
-        "description": f"""
-            Initiates a refund for a specific Juspay order using its `order_id` and returns with below json schema:
-                {json.dumps(response_schema.refund_creation_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_refund_schema,
-        "handler": order.create_refund_juspay
-    },
+    util.make_api_config(
+        name="create_refund_juspay",
+        description="Initiates a refund for a specific Juspay order using its `order_id`.",
+        model=api_schema.refund.JuspayRefundPayload,
+        handler=refund.create_refund_juspay,
+        response_schema=response_schema.refund_creation_response_schema,
+    ),
     {
         "name": "get_customer_juspay",
         "description": f""" 
@@ -75,33 +73,27 @@ AVAILABLE_TOOLS = [
         "schema": schema.juspay_order_fulfillment_schema,
         "handler": order.order_fulfillment_sync
     },
-    {
-        "name": "create_txn_refund_juspay",
-        "description": f"""
-            Initiates a refund based on transaction ID (instead of order ID) and returns with below json schema:
-                {json.dumps(response_schema.txn_refund_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_txn_refund_schema,
-        "handler": order.create_txn_refund_juspay
-    },
-    {
-        "name": "create_txn_juspay",
-        "description": f"""
-            Creates an order and processes payment in a single API call and returns with below json schema:
-                {json.dumps(response_schema.create_txn_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_create_txn_schema,
-        "handler": order.create_txn_juspay
-    },
-    {
-        "name": "create_moto_txn_juspay",
-        "description": f"""
-            Creates an order with MOTO (Mail Order/Telephone Order) authentication and returns with below json schema:
-                {json.dumps(response_schema.create_moto_txn_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_create_moto_txn_schema,
-        "handler": order.create_moto_txn_juspay
-    },
+    util.make_api_config(
+        name="create_txn_refund_juspay",
+        description="Initiates a refund based on transaction ID (instead of order ID).",
+        model=api_schema.refund.JuspayTxnRefundPayload,
+        handler=refund.create_txn_refund_juspay,
+        response_schema=response_schema.txn_refund_response_schema,
+    ),
+    util.make_api_config(
+        name="create_txn_juspay",
+        description="Creates an order and processes payment in a single API call.",
+        model=api_schema.txn.JuspayCreateTxnPayload,
+        handler=txn.create_txn_juspay,
+        response_schema=response_schema.create_txn_response_schema,
+    ),
+    util.make_api_config(
+        name="create_moto_txn_juspay",
+        description="Creates an order with MOTO (Mail Order/Telephone Order) authentication.",
+        model=api_schema.txn.JuspayCreateMotoTxnPayload,
+        handler=txn.create_moto_txn_juspay,
+        response_schema=response_schema.create_moto_txn_response_schema,
+    ),
     util.make_api_config(
         name="add_card_juspay",
         description="Adds a new card to the Juspay system for a customer.",

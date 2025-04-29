@@ -31,7 +31,7 @@ async def post(api_url: str, payload: dict, routing_id: str | None = None) -> di
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
             print(f"Calling Juspay API at: {api_url} with body: {payload}")
-            response = await client.post(api_url, headers=headers, data=payload)
+            response = await client.post(api_url, headers=headers, json=payload)
             response.raise_for_status()
             response_data = response.json()
             print(f"API Response Data: {response_data}")
