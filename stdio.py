@@ -4,7 +4,10 @@ import mcp.server.stdio
 import mcp.types as types
 from mcp.server.lowlevel import NotificationOptions
 from mcp.server.models import InitializationOptions
-from juspay_mcp.tools import app
+if os.getenv("JUSPAY_MCP_TYPE") == "DASHBOARD":
+    from juspay_dashboard_mcp.tools import app
+else:
+    from juspay_mcp.tools import app
 
 async def run_stdio():
     """Runs the MCP server using stdio for input/output."""

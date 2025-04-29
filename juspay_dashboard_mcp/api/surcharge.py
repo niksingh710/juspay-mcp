@@ -1,0 +1,28 @@
+import logging
+from juspay_dashboard_mcp.api.utils import post, get_juspay_host_from_api
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+async def list_surcharge_rules_juspay(payload: dict) -> dict:
+    """
+    Returns a list of all configured surcharge rules, including their current status and rule definitions.
+
+    The API endpoint is:
+        https://portal.juspay.in/api/ec/v1/rule/list
+
+    The call uses no request body.
+
+    Headers include:
+        - x-tenant-id from environment variable
+        - content-type: application/json
+
+    Returns:
+        dict: The parsed JSON response from the Juspay List Surcharge Rules API.
+
+    Raises:
+        Exception: If the API call fails.
+    """
+    host = await get_juspay_host_from_api()
+    api_url = f"{host}api/ec/v1/rule/list"
+    return await post(api_url, {})
