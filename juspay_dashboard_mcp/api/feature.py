@@ -22,3 +22,26 @@ async def fetch_feature_details_juspay(payload: dict) -> dict:
     api_url = f"{host}stein/feature-description/fetch"
     return await post(api_url, payload)
 
+async def fetch_feature_list_juspay(payload: dict) -> dict:
+    """
+    Calls the Juspay Marketplace API to retrieve a list of available features.
+
+    Args:
+        payload (dict): A dictionary containing:
+            - merchantId: Merchant ID to retrieve marketplace features for
+            - clientId: Optional client ID (nullable)
+
+    Returns:
+        dict: The parsed JSON response containing marketplace features.
+
+    Raises:
+        Exception: If the API call fails.
+    """
+    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    api_url = f"{host}stein/feature-list/fetch"
+    request_data = {
+        "merchant_id": payload["merchantId"],
+        "client_id": payload.get("clientId", None)
+    }
+    return await post(api_url, request_data)
+

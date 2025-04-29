@@ -61,6 +61,69 @@ AVAILABLE_TOOLS = [
         handler=feature.fetch_feature_details_juspay,
         response_schema=None,
     ),
+    util.make_api_config(
+        name="juspay_fetch_feature_list",
+        description="Lists all marketplace features with high-level details such as feature summary, supported PMTs and compatible products.",
+        model=api_schema.feature.JuspayFetchFeatureListPayload,
+        handler=feature.fetch_feature_list_juspay,
+        response_schema=None,
+    ),
+    util.make_api_config(
+        name="juspay_alert_details",
+        description="Provides detailed information for a specific alert ID, including source, monitored metrics, and applied filters.",
+        model=api_schema.alert.JuspayAlertDetailsPayload,
+        handler=alert.alert_details_juspay,
+        response_schema=None,
+    ),
+    util.make_api_config(
+        name="juspay_list_alerts",
+        description="Retrieves all alerts configured by the merchant, including their status, recipients, thresholds, and monitoring intervals.",
+        model=api_schema.alert.JuspayListAlertsPayload,
+        handler=alert.list_alerts_juspay,
+        response_schema=None,
+    ),
+    util.make_api_config(
+        name="juspay_list_orders_v4",
+        description="Retrieves a list of orders created within a specified time range. Supports optional filters for payment status and order type.",
+        model=api_schema.orders.JuspayListOrdersV4Payload,
+        handler=orders.list_orders_v4_juspay,
+        response_schema=None,
+    ),
+    util.make_api_config(
+        name="juspay_get_order_details",
+        description="Returns complete details for a given order ID.",
+        model=api_schema.orders.JuspayGetOrderDetailsPayload,
+        handler=orders.get_order_details_juspay,
+        response_schema=None,
+    ),
+    util.make_api_config(
+        name="juspay_list_payout_orders",
+        description="Retrieves a list of payout orders created within a specified time range (mandatory). Supports additional filters from the Q API (payout domain) such as order_status and fulfillment_method.",
+        model=api_schema.orders.JuspayListPayoutOrdersPayload,
+        handler=orders.list_payout_orders_juspay,
+        response_schema=None,
+    ),
+    util.make_api_config(
+        name="juspay_payout_order_details",
+        description="Returns complete details for a given payout order ID.",
+        model=api_schema.orders.JuspayPayoutOrderDetailsPayload,
+        handler=orders.payout_order_details_juspay,
+        response_schema=None,
+    ),
+    util.make_api_config(
+        name="juspay_list_payment_links_v1",
+        description="Retrieves a list of payment links created within a specified time range (mandatory). Supports filters from the transactions (txns) domain such as payment_status and order_type.",
+        model=api_schema.payments.JuspayListPaymentLinksV1Payload,
+        handler=payments.list_payment_links_v1_juspay,
+        response_schema=None,
+    ),
+    util.make_api_config(
+        name="juspay_list_surcharge_rules",
+        description="No input required. Returns a list of all configured surcharge rules, including their current status and rule definitions.",
+        model=api_schema.surcharge.JuspayListSurchargeRulesPayload,
+        handler=surcharger.list_surcharge_rules_juspay,
+        response_schema=None,
+    ),
 ]
 
 @app.list_tools()
@@ -94,7 +157,7 @@ async def handle_tool_calls(name: str, arguments: dict) -> list[types.TextConten
             raise ValueError(f"No handler defined for tool: {name}")
 
         model_cls = tool_entry.get("model")
-        if model_cls:
+        if (model_cls):
             try:
                 payload = model_cls(**arguments)  
                 payload_dict = payload.dict(exclude_none=True) 
