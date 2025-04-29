@@ -124,6 +124,13 @@ AVAILABLE_TOOLS = [
         handler=surcharge.list_surcharge_rules_juspay,
         response_schema=None,
     ),
+    util.make_api_config(
+        name="q_api",
+        description=api_schema.q_api.api_description,
+        model=api_schema.q_api.ToolQApiPayload,
+        handler=q_api.q_api,
+        response_schema=None,
+    ),
 ]
 
 @app.list_tools()
