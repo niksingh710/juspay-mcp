@@ -9,6 +9,7 @@ COPY . /app
 
 RUN pip install --no-cache-dir --no-build-isolation . --root-user-action=ignore
 
+ENV JUSPAY_MCP_TYPE="DASHBOARD"
 ENV PYTHONUNBUFFERED=1
 
 ENTRYPOINT ["python", "stdio.py"]
