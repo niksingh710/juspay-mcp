@@ -14,3 +14,13 @@ class JuspayFetchFeatureDetailsPayload(BaseModel):
         None,
         description="Optional client ID."
     )
+
+class JuspayFetchFeatureListPayload(BaseModel):
+    merchant_id: str = Field(
+        ...,
+        description="Merchant ID for which features are to be fetched."
+    )
+    client_id: Optional[str] = Field(
+        None,
+        description="Optional client ID."
+    )
