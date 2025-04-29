@@ -37,33 +37,27 @@ AVAILABLE_TOOLS = [
         handler=refund.create_refund_juspay,
         response_schema=response_schema.refund_creation_response_schema,
     ),
-    {
-        "name": "get_customer_juspay",
-        "description": f""" 
-            Retrieves customer details using the Juspay customer ID and returns with below json schema:
-                {json.dumps(response_schema.get_customer_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_get_customer_schema,
-        "handler": customer.get_customer_juspay
-    },
-    {
-        "name": "create_customer_juspay",
-        "description": f"""
-            Creates a new customer in Juspay with the provided details and returns with below json schema:
-                {json.dumps(response_schema.create_customer_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_create_customer_schema,
-        "handler": customer.create_customer_juspay
-    },
-    {
-        "name": "update_customer_juspay",
-        "description": f"""
-            Updates an existing customer in Juspay with the provided details and returns with below json schema:
-                {json.dumps(response_schema.update_customer_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_update_customer_schema,
-        "handler": customer.update_customer_juspay
-    },
+    util.make_api_config(
+        name="get_customer_juspay",
+        description="Retrieves customer details using the Juspay customer ID.",
+        model=api_schema.customer.JuspayGetCustomerPayload,
+        handler=customer.get_customer_juspay,
+        response_schema=response_schema.get_customer_response_schema,
+    ),
+    util.make_api_config(
+        name="create_customer_juspay",
+        description="Creates a new customer in Juspay with the provided details.",
+        model=api_schema.customer.JuspayCreateCustomerPayload,
+        handler=customer.create_customer_juspay,
+        response_schema=response_schema.create_customer_response_schema,
+    ),
+    util.make_api_config(
+        name="update_customer_juspay",
+        description="Updates an existing customer in Juspay with the provided details.",
+        model=api_schema.customer.JuspayUpdateCustomerPayload,
+        handler=customer.update_customer_juspay,
+        response_schema=response_schema.update_customer_response_schema,
+    ),
     {
         "name": "order_fulfillment_sync_juspay",
         "description": f"""

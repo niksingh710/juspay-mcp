@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import Field
+
 from juspay_mcp.api_schema.routing import WithRoutingId
 
 class ListWalletsPayload(WithRoutingId):

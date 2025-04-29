@@ -16,7 +16,7 @@ async def create_refund_juspay(payload: dict) -> dict:
             - unique_request_id (str): A unique identifier for this refund attempt.
             - amount (str): The amount to be refunded (e.g., "50.00").
         May include:
-            - customer_id (str, optional): If provided, used for the x-routing-id header.
+            - routing_id (str, optional): If provided, used for the x-routing-id header.
 
     Returns:
         dict: Parsed JSON response from the Juspay Refund API, indicating the status
@@ -36,17 +36,16 @@ async def create_refund_juspay(payload: dict) -> dict:
         raise ValueError("The payload must include 'unique_request_id'.")
     if not amount:
          raise ValueError("The payload must include 'amount'.")
+    
+    routing_id = payload.get("routing_id")
 
-    
-    customer_id = payload.get("customer_id")
-    
     api_url = ENDPOINTS["refund"].format(order_id=order_id)
     
-    form_data = {
+    refund_data = {
         "unique_request_id": unique_request_id,
         "amount": amount,
     }
-    await post(api_url, form_data)
+    await post(api_url, refund_data, routing_id)
 
 async def create_txn_refund_juspay(payload: dict) -> dict:
     """

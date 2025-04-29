@@ -1,5 +1,4 @@
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import Field
 from juspay_mcp.api_schema.routing import WithRoutingId
 
 class JuspayTxnRefundPayload(WithRoutingId):
@@ -8,7 +7,7 @@ class JuspayTxnRefundPayload(WithRoutingId):
     amount: str = Field(..., description="Refund amount as a string (e.g., '100.00').")
 
 
-class JuspayRefundPayload(BaseModel):
+class JuspayRefundPayload(WithRoutingId):
     order_id: str = Field(..., description="Unique identifier of the order to refund.")
     unique_request_id: str = Field(..., description="Unique refund request identifier (e.g., 'xyz123').")
     amount: str = Field(..., description="Refund amount as a string (e.g., '100.00').")
