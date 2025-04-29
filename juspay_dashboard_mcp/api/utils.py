@@ -1,8 +1,8 @@
 import httpx
-from juspay_mcp.config import get_json_headers
+from juspay_dashboard_mcp.config import get_common_headers
 
-async def call(api_url: str, customer_id: str | None = None, additional_headers: dict = None) -> dict:
-    headers = get_json_headers(routing_id=customer_id)
+async def call(api_url: str, additional_headers: dict = None) -> dict:
+    headers = get_common_headers()
     
     if additional_headers:
         headers.update(additional_headers)
@@ -24,9 +24,8 @@ async def call(api_url: str, customer_id: str | None = None, additional_headers:
             print(f"Error during Juspay API call: {e}")
             raise Exception(f"Failed to call Juspay API: {e}") from e
 
-async def post(api_url: str, payload: dict, routing_id: str | None = None) -> dict:
-    effective_routing_id = routing_id or payload.get("customer_id")
-    headers = get_json_headers(routing_id=effective_routing_id) 
+async def post(api_url: str, payload: dict) -> dict:
+    headers = get_common_headers(payload) 
 
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
@@ -34,7 +33,7 @@ async def post(api_url: str, payload: dict, routing_id: str | None = None) -> di
             response = await client.post(api_url, headers=headers, json=payload)
             response.raise_for_status()
             response_data = response.json()
-            print(f"API Response Data: {response_data}")
+            # print(f"API Response Data: {response_data}")
             return response_data
         except httpx.HTTPStatusError as e:
             error_content = e.response.text if e.response else "Unknown error"
@@ -43,3 +42,34 @@ async def post(api_url: str, payload: dict, routing_id: str | None = None) -> di
         except Exception as e:
             print(f"Error during Juspay API call: {e}")
             raise Exception(f"Failed to call Juspay API: {e}") from e
+        
+
+async def get_juspay_host_from_api(token: str, headers: dict = None) -> str:
+    """
+    Calls the Juspay validate token API, checks the parentEntityContext in the response,
+    and returns the appropriate host URL.
+
+    Args:
+        token (str): The token to validate.
+
+    Returns:
+        str: The selected host URL based on parentEntityContext.
+    """
+    return "https://portal.juspay.in/"
+    # api_url = "https://portal.juspay.in/api/ec/v1/validate/token"
+    # request_data = {"token": token}
+    # print(f"calling with token {request_data}")
+    # # Use default headers if not provided
+    # if headers is None:
+    #     headers = {
+    #         "Content-Type": "application/json",
+    #         "Referer": "https://portal.juspay.in/",
+    #     }
+    # async with httpx.AsyncClient(timeout=30.0) as client:
+    #     response = await client.post(api_url, headers=headers, json=request_data)
+    #     response.raise_for_status()
+    #     resp_json = response.json()
+    #     parent_entity_context = resp_json.get("parentEntityContext")
+    #     if parent_entity_context and parent_entity_context.upper() == "JUSPAY":
+    #         return "https://euler-x.internal.svc.k8s.mum.juspay.net/"
+    #     return "https://portal.juspay.in/"

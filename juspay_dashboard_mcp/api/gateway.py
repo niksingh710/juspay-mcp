@@ -1,6 +1,6 @@
-import os
-import httpx
 import logging
+
+from juspay_dashboard_mcp.api.utils import post, get_juspay_host_from_api
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -18,8 +18,8 @@ async def list_configured_gateways_juspay(payload: dict) -> dict:
         - merchantId (e.g., "paypal")
 
     Headers include:
-        - x-tenant-id from meta_info
-        - x-web-logintoken from meta_info
+        - x-tenant-id from payload
+        - x-web-logintoken from payload
         - content-type: application/json
 
     Args:
@@ -32,22 +32,165 @@ async def list_configured_gateways_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails.
     """
+    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    api_url = f"{host}api/ec/v1/gateway/list"
+    return await post(api_url, payload)
 
-    logger.info(f"API URL: {api_url}")
-    login_token = meta_info.get("x_web_login_token")
-    tenant_id = meta_info.get("x_tenant_id")
-    logger.info(f"NON PARSED HEADERS: ${login_token} ${tenant_id}")
-    #headers = config.get_common_headers(web_login_token=login_token)
-    #logger.info(f"PARSED HEADERS: {headers}")
+async def get_gateway_scheme_juspay(payload: dict) -> dict:
+    """
+    Provides detailed configuration information for a gateway, including:
+    1. Required and optional fields (with descriptions and data types).
+    2. Supported payment methods and payment flows.
 
-    headers = {
-        "x-tenant-id": tenant_id,
-        "x-web-logintoken": login_token,
-        "content-type": "application/json",
-        "accept": "*/*",
+    The API endpoint is:
+        https://portal.juspay.in/api/ec/v2/gateway/scheme/{gateway}
+
+    The call uses JSON data containing:
+        - merchantId (optional, but recommended)
+
+    Headers include:
+        - x-tenant-id from payload
+        - x-web-logintoken from payload
+        - content-type: application/json
+
+    Args:
+        payload (dict): A dictionary with the following required key:
+            - gateway: Gateway code (e.g., "TATA_PA").
+            - merchantId: Merchant identifier (optional).
+
+    Returns:
+        dict: The parsed JSON response from the Juspay Get Gateway Scheme API.
+
+    Raises:
+        Exception: If the API call fails.
+    """
+    gateway = payload.get("gateway")
+    merchant_id = payload.get("merchantId")
+    if not gateway:
+        raise ValueError("The payload must include 'gateway'.")
+
+    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    api_url = f"{host}api/ec/v2/gateway/scheme/{gateway}"
+
+    body = {}
+    if merchant_id:
+        body["merchantId"] = merchant_id
+
+    return await post(api_url, body)
+
+async def get_gateway_details_juspay(payload: dict) -> dict:
+    """
+    Returns detailed information about a specific gateway configured by the merchant.
+
+    The API endpoint is:
+        https://portal.juspay.in/api/ec/v1/gateway/{mga_id}
+
+    The call uses JSON data containing:
+        - merchantId (e.g., "paypal")
+
+    Headers include:
+        - x-tenant-id from payload
+        - x-web-logintoken from payload
+        - content-type: application/json
+
+    Args:
+        payload (dict): A dictionary with the following required keys:
+            - mga_id: MGA ID of the gateway.
+            - merchantId: Merchant identifier.
+
+    Returns:
+        dict: The parsed JSON response from the Juspay Get Gateway Details API.
+
+    Raises:
+        Exception: If the API call fails.
+    """
+    mga_id = payload.get("mga_id")
+    merchant_id = payload.get("merchantId")
+    if not mga_id or not merchant_id:
+        raise ValueError("The payload must include 'mga_id' and 'merchantId'.")
+
+    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    api_url = f"{host}api/ec/v1/gateway/{mga_id}"
+
+    body = {"merchantId": merchant_id}
+
+    return await post(api_url, body)
+
+async def list_gateway_scheme_juspay(payload: dict) -> dict:
+    """
+    Provides a list of all available payment gateways that can be configured on PGCC.
+    Useful for checking support for specific gateways (e.g., "Does Juspay support Gateway X?").
+
+    The API endpoint is:
+        https://portal.juspay.in/api/ec/v2/gateway/scheme/list
+
+    The call uses no request body.
+
+    Headers include:
+        - x-tenant-id from payload
+        - x-web-logintoken from payload
+        - content-type: application/json
+
+    Returns:
+        list: The parsed JSON response from the Juspay List Gateway Scheme API.
+
+    Raises:
+        Exception: If the API call fails.
+    """
+    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    api_url = f"{host}api/ec/v2/gateway/scheme/list"
+    return await post(api_url, {})
+
+async def get_gateway_downtime(payload: dict) -> dict:
+    """
+    Calls the Juspay Gateway Downtime API to retrieve downtime information.
+
+    Args:
+        payload (dict): A dictionary containing:
+            - order_id: Order ID to query gateway downtime information
+            - merchant_id: Merchant ID associated with the order
+            - txn_uuid: Optional transaction UUID (can be None)
+
+    Returns:
+        dict: The parsed JSON response from the Gateway Downtime API.
+
+    Raises:
+        Exception: If the API call fails.
+    """
+    order_id = payload.get("order_id")
+    merchant_id = payload.get("merchant_id")
+    txn_uuid = payload.get("txn_uuid")
+
+    if not order_id or not merchant_id:
+        raise ValueError("The payload must include 'order_id' and 'merchant_id'.")
+
+    # Assume config.API_ENDPOINTS["gateway_downtime"] gives the base URL
+    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    api_url = f"{host}api/ec/v1/gateway/downtime"
+
+    body = {
+        "order_id": order_id,
+        "merchant_id": merchant_id,
     }
-    auth_type = payload.get("auth_type", "OTP")
-    routing_id = payload.get("routing_id")
-    
-    api_url = "https://portal.juspay.in/api/ec/v1/gateway/list"
-    await call(api_url, routing_id)
+    if txn_uuid:
+        body["txn_uuid"] = txn_uuid
+
+    return await post(api_url, body)
+
+async def get_merchant_gateways_pm_details_juspay(payload: dict) -> dict:
+    """
+    Fetches all gateways and their supported payment methods for the merchant.
+
+    Args:
+        payload (dict): Not required for this API.
+
+    Returns:
+        dict: The parsed JSON response from the Juspay Gateway Payment Methods API.
+
+    Raises:
+        Exception: If the API call fails.
+    """
+    host = await get_juspay_host_from_api(token=payload.get("web_login_str"))
+    api_url = f"{host}api/ec/v1/gateway/paymentMethods"
+    return await post(api_url, {})
+

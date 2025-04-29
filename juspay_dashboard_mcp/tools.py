@@ -19,6 +19,48 @@ AVAILABLE_TOOLS = [
         handler=gateway.list_configured_gateways_juspay,
         response_schema=None,
     ),
+    util.make_api_config(
+        name="juspay_get_gateway_scheme",
+        description="This API provides detailed configuration information for a gateway, including required/optional fields and supported payment methods.",
+        model=api_schema.gateway.JuspayGetGatewaySchemePayload,
+        handler=gateway.get_gateway_scheme_juspay,
+        response_schema=None,
+    ),
+    util.make_api_config(
+        name="juspay_get_gateway_details",
+        description="This API returns detailed information about a specific gateway configured by the merchant. Requires mga_id and merchantId.",
+        model=api_schema.gateway.JuspayGetGatewayDetailsPayload,
+        handler=gateway.get_gateway_details_juspay,
+        response_schema=None,
+    ),
+    util.make_api_config(
+        name="juspay_list_gateway_scheme",
+        description="This API returns a list of all available payment gateways that can be configured on PGCC.",
+        model=api_schema.gateway.JuspayListGatewaySchemePayload,
+        handler=gateway.list_gateway_scheme_juspay,
+        response_schema=None,
+    ),
+    util.make_api_config(
+        name="juspay_gateway_downtime",
+        description="This API retrieves downtime information for a gateway using order_id and merchant_id. Optionally accepts txn_uuid.",
+        model=api_schema.gateway.JuspayGatewayDowntimePayload,
+        handler=gateway.get_gateway_downtime,
+        response_schema=None,
+    ),
+    util.make_api_config(
+        name="juspay_get_merchant_gateways_pm_details",
+        description="This API fetches all gateways and their supported payment methods for the merchant.",
+        model=api_schema.gateway.JuspayGetMerchantGatewaysPmDetailsPayload,
+        handler=gateway.get_merchant_gateways_pm_details_juspay,
+        response_schema=None,
+    ),
+    util.make_api_config(
+        name="juspay_fetch_feature_details",
+        description="This API provides comprehensive information for a specific feature ID, including overview, description, FAQs, usage by other merchants, supported PGs/PMTs/platforms, and related features.",
+        model=api_schema.feature.JuspayFetchFeatureDetailsPayload,
+        handler=feature.fetch_feature_details_juspay,
+        response_schema=None,
+    ),
 ]
 
 @app.list_tools()

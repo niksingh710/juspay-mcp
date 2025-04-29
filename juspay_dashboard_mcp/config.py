@@ -25,26 +25,19 @@ def verify_env_vars():
 def get_base64_auth():
     """Returns the base64 encoded auth string."""
     pass
-
-def get_common_headers():
+    
+def get_common_headers(payload: dict):
     """
     Returns common headers used by all API calls.
+    Uses the provided routing_id, or defaults to JUSPAY_MERCHANT_ID if None.
     """
     verify_env_vars()
+
     return {
-        "Authorization": f"Basic {get_base64_auth()}",
-        "Accept": "application/json",
-        "x-request-id": f"mcp-tool-{os.urandom(6).hex()}" 
+       "Content-Type": "application/json",
+        "accept": "*/*",
+        "x-request-id": f"mcp-tool-{os.urandom(6).hex()}",
+        "x-tenant-id": payload.pop("tenant_id", None),
+        "x-web-logintoken": payload.pop("web_login_str"),
+        "cookie": payload.pop("cookie", None),
     }
-
-def get_json_headers():
-    """Returns headers for JSON content type."""
-    headers = get_common_headers()
-    headers["Content-Type"] = "application/json"
-    return headers
-
-def get_form_headers():
-    """Returns headers for form URL-encoded content type."""
-    headers = get_common_headers()
-    headers["Content-Type"] = "application/x-www-form-urlencoded"
-    return headers
