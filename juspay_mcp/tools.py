@@ -4,7 +4,7 @@ import inspect
 from mcp.server.lowlevel import Server
 from mcp.server.sse import SseServerTransport
 
-from juspay_mcp import schema, response_schema
+from juspay_mcp import response_schema
 from juspay_mcp.api import *
 import juspay_mcp.api_schema as api_schema
 import juspay_mcp.utils as util
@@ -12,24 +12,20 @@ import juspay_mcp.utils as util
 app = Server("juspay")
 
 AVAILABLE_TOOLS = [
-    {
-        "name": "session_api_juspay",
-        "description": f"""
-            Creates a new Juspay session for a given order and returns with below json schema:
-                {json.dumps(response_schema.session_response_schema, indent=2)}        
-        """,
-        "schema": schema.juspay_session_schema,
-        "handler": session.session_api_juspay
-    },
-    {
-        "name": "order_status_api_juspay",
-        "description": f"""
-            Retrieves the status of a specific Juspay order using its `order_id` and returns with below json schema:
-                {json.dumps(response_schema.order_status_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_order_status_schema,
-        "handler": order.order_status_api_juspay
-    },
+    util.make_api_config(
+        name="session_api_juspay",
+        description="Creates a new Juspay session for a given order.",
+        model=api_schema.session.JuspaySessionPayload,
+        handler=session.session_api_juspay,
+        response_schema=response_schema.session_response_schema,
+    ),
+    util.make_api_config(
+        name="order_status_api_juspay",
+        description="Retrieves the status of a specific Juspay order using its `order_id`.",
+        model=api_schema.order.JuspayOrderStatusPayload,
+        handler=order.order_status_api_juspay,
+        response_schema=response_schema.order_status_response_schema,
+    ),
     util.make_api_config(
         name="create_refund_juspay",
         description="Initiates a refund for a specific Juspay order using its `order_id`.",
@@ -58,15 +54,13 @@ AVAILABLE_TOOLS = [
         handler=customer.update_customer_juspay,
         response_schema=response_schema.update_customer_response_schema,
     ),
-    {
-        "name": "order_fulfillment_sync_juspay",
-        "description": f"""
-            Updates the fulfillment status of a Juspay order and returns with below json schema:
-                {json.dumps(response_schema.order_fulfillment_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_order_fulfillment_schema,
-        "handler": order.order_fulfillment_sync
-    },
+    util.make_api_config(
+        name="order_fulfillment_sync_juspay",
+        description="Updates the fulfillment status of a Juspay order.",
+        model=api_schema.order.JuspayOrderFulfillmentPayload,
+        handler=order.order_fulfillment_sync,
+        response_schema=response_schema.order_fulfillment_response_schema,
+    ),
     util.make_api_config(
         name="create_txn_refund_juspay",
         description="Initiates a refund based on transaction ID (instead of order ID).",
@@ -178,6 +172,20 @@ AVAILABLE_TOOLS = [
         model=api_schema.wallet.ListWalletsPayload,
         handler=wallet.list_wallets,
         response_schema=response_schema.list_wallets_response_schema,
+    ),
+    util.make_api_config(
+        name="create_order_juspay",
+        description="Creates a new order in Juspay payment system.",
+        model=api_schema.order.JuspayCreateOrderPayload,
+        handler=order.create_order_juspay,
+        response_schema=response_schema.create_order_response_schema,
+    ),
+    util.make_api_config(
+        name="update_order_juspay",
+        description="Updates an existing order in Juspay.",
+        model=api_schema.order.JuspayUpdateOrderPayload,
+        handler=order.update_order_juspay,
+        response_schema=response_schema.update_order_response_schema,
     ),
 ]
 
