@@ -19,6 +19,8 @@ async def fetch_feature_details_juspay(payload: dict) -> dict:
         Exception: If the API call fails.
     """
     host = await get_juspay_host_from_api()
+
+    print(f"payload:{payload}")
     api_url = f"{host}stein/feature-description/fetch"
     return await post(api_url, payload)
 
@@ -40,8 +42,8 @@ async def fetch_feature_list_juspay(payload: dict) -> dict:
     host = await get_juspay_host_from_api()
     api_url = f"{host}stein/feature-list/fetch"
     request_data = {
-        "merchant_id": payload["merchantId"],
-        "client_id": payload.get("clientId", None)
+        "merchant_id": payload["merchant_id"],
+        "client_id": payload.get("client_id", None)
     }
     return await post(api_url, request_data)
 

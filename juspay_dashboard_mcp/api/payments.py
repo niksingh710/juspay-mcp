@@ -9,9 +9,9 @@ async def list_payment_links_v1_juspay(payload: dict) -> dict:
     Calls the Juspay Portal API to retrieve a list of payment links within a specified time range.
 
     Args:
-        payload (dict): A dictionary containing:
-            - dateFrom: Start date/time in ISO format (e.g., '2025-04-15T18:30:00Z')
-            - dateTo: End date/time in ISO format (e.g., '2025-04-16T15:08:10Z')
+        payload (dict): Should contain 'qFilters' and 'filters' as required by the API.
+            - qFilters: Query filters for the API (dict)
+            - filters: Additional filters for the API (dict)
             - offset: Pagination offset (optional, default 0)
 
     Returns:
@@ -22,20 +22,14 @@ async def list_payment_links_v1_juspay(payload: dict) -> dict:
     """
     host = await get_juspay_host_from_api()
     api_url = f"{host}api/ec/v1/paymentLinks/list"
-    request_data = {
-        "qFilters": {
-            "field": "order_source_object",
-            "condition": "Equals",
-            "val": "PAYMENT_LINK"
-        },
-        "filters": {
-            "dateCreated": {
-                "lte": payload["dateTo"],
-                "gte": payload["dateFrom"],
-                "opt": "custom_range"
-            }
-        }
-    }
+
+    # Build request_data directly from payload, only including expected keys
+    request_data = {}
+    if "qFilters" in payload:
+        request_data["qFilters"] = payload["qFilters"]
+    if "filters" in payload:
+        request_data["filters"] = payload["filters"]
     if "offset" in payload:
         request_data["offset"] = payload["offset"]
+
     return await post(api_url, request_data)

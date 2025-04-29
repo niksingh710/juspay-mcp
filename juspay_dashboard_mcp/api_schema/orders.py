@@ -1,7 +1,9 @@
 from typing import Optional
 from pydantic import BaseModel, Field
+from juspay_dashboard_mcp.api_schema.headers import WithHeaders
 
-class JuspayListOrdersV4Payload(BaseModel):
+
+class JuspayListOrdersV4Payload(WithHeaders):
     dateFrom: str = Field(
         ...,
         description="Start date/time in ISO 8601 format (e.g., 'YYYY-MM-DDTHH:MM:SSZ')."
@@ -27,13 +29,13 @@ class JuspayListOrdersV4Payload(BaseModel):
         description="Domain for query (optional, default is 'ordersELS')."
     )
 
-class JuspayGetOrderDetailsPayload(BaseModel):
+class JuspayGetOrderDetailsPayload(WithHeaders):
     order_id: str = Field(
         ...,
         description="Order ID for which details are to be fetched."
     )
 
-class JuspayListPayoutOrdersPayload(BaseModel):
+class JuspayListPayoutOrdersPayload(WithHeaders):
     createdAt_lte: str = Field(
         ...,
         alias="createdAt.lte",
@@ -61,7 +63,7 @@ class JuspayListPayoutOrdersPayload(BaseModel):
         description="Filter by fulfillment method."
     )
 
-class JuspayPayoutOrderDetailsPayload(BaseModel):
+class JuspayPayoutOrderDetailsPayload(WithHeaders):
     orderId: str = Field(
         ...,
         description="Payout order ID for which details are to be fetched."

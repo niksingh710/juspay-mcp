@@ -1,7 +1,8 @@
 import logging
 from datetime import datetime, timezone
-from juspay_dashboard_mcp.api.utils import post, get_juspay_host_from_api
+from juspay_dashboard_mcp.api.utils import post, get_juspay_host_from_api,call
 from urllib.parse import urlencode
+from juspay_dashboard_mcp.config import get_common_headers
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -114,7 +115,7 @@ async def list_payout_orders_juspay(payload: dict) -> dict:
     host = await get_juspay_host_from_api()
     api_url = f"{host}api/payout/batch/dashboard/v1/orders?{urlencode(query_params)}"
     # This endpoint is a GET request
-    return await post(api_url, method="GET")
+    return await post(api_url, {})
 
 async def payout_order_details_juspay(payload: dict) -> dict:
     """
@@ -129,11 +130,14 @@ async def payout_order_details_juspay(payload: dict) -> dict:
     Raises:
         Exception: If the API call fails.
     """
-    order_id = payload.get("orderId")
-    if not order_id:
+    orderId = payload.get("orderId")
+    if not orderId:
         raise ValueError("Payload must contain 'orderId'.")
-
+    print(f"orderId: {orderId}")
     host = await get_juspay_host_from_api()
-    api_url = f"{host}api/payout/batch/dashboard/v1/orders/{order_id}?expand=fulfillment,payment,refund"
-    # This endpoint is a GET request
-    return await post(api_url, method="GET")
+    api_url = f"{host}api/payout/batch/dashboard/v1/orders/{orderId}?expand=fulfillment,payment,refund"
+    headers = get_common_headers(payload)
+    headers["X-Token-Type"] = "Euler"
+    print(f"headers: {headers}")
+    print(f"payload:{payload}")
+    return await call(api_url, additional_headers=headers)

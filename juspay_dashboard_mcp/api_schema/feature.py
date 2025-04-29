@@ -1,7 +1,8 @@
 from typing import Optional
 from pydantic import BaseModel, Field
+from juspay_dashboard_mcp.api_schema.headers import WithHeaders
 
-class JuspayFetchFeatureDetailsPayload(BaseModel):
+class JuspayFetchFeatureDetailsPayload(WithHeaders):
     merchant_id: str = Field(
         ...,
         description="Merchant ID for which feature details are to be fetched."
@@ -15,7 +16,7 @@ class JuspayFetchFeatureDetailsPayload(BaseModel):
         description="Optional client ID."
     )
 
-class JuspayFetchFeatureListPayload(BaseModel):
+class JuspayFetchFeatureListPayload(WithHeaders):
     merchant_id: str = Field(
         ...,
         description="Merchant ID for which features are to be fetched."

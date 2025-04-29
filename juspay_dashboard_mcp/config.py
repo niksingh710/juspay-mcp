@@ -38,11 +38,17 @@ def get_common_headers(payload: dict):
     """
     verify_env_vars()
 
-    return {
-       "Content-Type": "application/json",
+    default_headers = {
+         "Content-Type": "application/json",
         "accept": "*/*",
         "x-request-id": f"mcp-tool-{os.urandom(6).hex()}",
-        "x-tenant-id": payload.pop("tenant_id", None),
-        "x-web-logintoken": JUSPAY_WEB_LOGIN_TOKEN,
-        "cookie": payload.pop("cookie", None),
+        "x-web-logintoken": f"{JUSPAY_WEB_LOGIN_TOKEN}",
     }
+
+    if payload.get("tentant_id"):
+        default_headers["x-tenant-id"] = payload.pop("tenant_id")
+
+    if payload.get("cookie"):
+        default_headers["cookie"] = payload.pop("cookie")
+        
+    return default_headers

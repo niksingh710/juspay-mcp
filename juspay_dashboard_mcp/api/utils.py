@@ -29,7 +29,7 @@ async def post(api_url: str, payload: dict) -> dict:
 
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
-            print(f"Calling Juspay API at: {api_url} with body: {payload}")
+            print(f"Calling Juspay API at: {api_url} with body: {payload} and headers: {headers}")
             response = await client.post(api_url, headers=headers, json=payload)
             response.raise_for_status()
             response_data = response.json()
