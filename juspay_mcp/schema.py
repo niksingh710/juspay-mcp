@@ -98,7 +98,7 @@ juspay_create_customer_schema = {
         },
         "routing_id": {
             "type": "string",
-            "description": "Optional custom routing ID for the API request."
+            "description": "Optional custom routing ID for the API request. We recommend passing the customer_id as the x-routing-id. If the customer is checking out as a guest, you can pass an alternative ID that helps track the payment session lifecycle. For example, this could be an Order ID or Cart ID."
         }
     }
 }
@@ -133,7 +133,7 @@ juspay_update_customer_schema = {
         },
         "routing_id": {
             "type": "string",
-            "description": "Optional custom routing ID for the API request."
+            "description": "Optional custom routing ID for the API request. We recommend passing the customer_id as the x-routing-id. If the customer is checking out as a guest, you can pass an alternative ID that helps track the payment session lifecycle. For example, this could be an Order ID or Cart ID."
         }
     }
 }
@@ -212,7 +212,7 @@ juspay_create_order_schema = {
         
         "routing_id": {
             "type": "string", 
-            "description": "Optional custom routing ID for the API request."
+            "description": "Optional custom routing ID for the API request. We recommend passing the customer_id as the x-routing-id. If the customer is checking out as a guest, you can pass an alternative ID that helps track the payment session lifecycle. For example, this could be an Order ID or Cart ID."
         },
     },
     "additionalProperties": True
@@ -236,7 +236,7 @@ juspay_update_order_schema = {
         },
         "routing_id": {
             "type": "string",
-            "description": "Optional custom routing ID for the API request."
+            "description": "Optional custom routing ID for the API request. We recommend passing the customer_id as the x-routing-id. If the customer is checking out as a guest, you can pass an alternative ID that helps track the payment session lifecycle. For example, this could be an Order ID or Cart ID."
         }
     },
     "additionalProperties": True
@@ -275,7 +275,7 @@ juspay_order_fulfillment_schema = {
         },
         "routing_id": {
             "type": "string",
-            "description": "Optional custom routing ID for the API request."
+            "description": "Optional custom routing ID for the API request. We recommend passing the customer_id as the x-routing-id. If the customer is checking out as a guest, you can pass an alternative ID that helps track the payment session lifecycle. For example, this could be an Order ID or Cart ID."
         }
     }
 }
@@ -298,7 +298,7 @@ juspay_txn_refund_schema = {
         },
         "routing_id": {
             "type": "string",
-            "description": "Optional custom routing ID for the API request."
+            "description": "Optional custom routing ID for the API request. We recommend passing the customer_id as the x-routing-id. If the customer is checking out as a guest, you can pass an alternative ID that helps track the payment session lifecycle. For example, this could be an Order ID or Cart ID."
         }
     }
 }
@@ -384,7 +384,7 @@ juspay_create_txn_schema = {
         },
         "routing_id": {
             "type": "string",
-            "description": "Optional custom routing ID for the API request."
+            "description": "Optional custom routing ID for the API request. We recommend passing the customer_id as the x-routing-id. If the customer is checking out as a guest, you can pass an alternative ID that helps track the payment session lifecycle. For example, this could be an Order ID or Cart ID."
         }
     },
     "additionalProperties": True
@@ -460,315 +460,8 @@ juspay_create_moto_txn_schema = {
         },
         "routing_id": {
             "type": "string",
-            "description": "Optional custom routing ID for the API request."
+            "description": "Optional custom routing ID for the API request. We recommend passing the customer_id as the x-routing-id. If the customer is checking out as a guest, you can pass an alternative ID that helps track the payment session lifecycle. For example, this could be an Order ID or Cart ID."
         }
     },
     "additionalProperties": True
-}
-
-juspay_add_card_schema = {
-    "type": "object",
-    "required": [
-        "merchant_id", "customer_id", "customer_email", 
-        "card_number", "card_exp_year", "card_exp_month", "name_on_card"
-    ],
-    "properties": {
-        "merchant_id": {
-            "type": "string",
-            "description": "Merchant identifier."
-        },
-        "customer_id": {
-            "type": "string",
-            "description": "Customer identifier."
-        },
-        "customer_email": {
-            "type": "string",
-            "description": "Customer's email address."
-        },
-        "card_number": {
-            "type": "string",
-            "description": "Complete card number."
-        },
-        "card_exp_year": {
-            "type": "string",
-            "description": "Card expiry year (e.g., '2025')."
-        },
-        "card_exp_month": {
-            "type": "string",
-            "description": "Card expiry month (e.g., '07')."
-        },
-        "name_on_card": {
-            "type": "string",
-            "description": "Name as printed on the card."
-        },
-        "nickname": {
-            "type": "string",
-            "description": "Friendly name for the card."
-        },
-        "routing_id": {
-            "type": "string",
-            "description": "Optional custom routing ID for the API request."
-        }
-    }
-}
-
-juspay_list_cards_schema = {
-    "type": "object",
-    "required": ["customer_id"],
-    "properties": {
-        "customer_id": {
-            "type": "string",
-            "description": "Customer identifier whose cards to retrieve."
-        },
-        "options.check_cvv_less_support": {
-            "type": "boolean",
-            "description": "Check if cards support CVV-less transactions.",
-            "default": False
-        },
-        "routing_id": {
-            "type": "string",
-            "description": "Optional custom routing ID for the API request."
-        }
-    }
-}
-
-juspay_delete_card_schema = {
-    "type": "object",
-    "required": ["card_token"],
-    "properties": {
-        "card_token": {
-            "type": "string",
-            "description": "Unique token of the card to be deleted."
-        },
-        "routing_id": {
-            "type": "string",
-            "description": "Optional custom routing ID for the API request."
-        }
-    }
-}
-
-juspay_update_card_schema = {
-    "type": "object",
-    "required": ["card_token"],
-    "properties": {
-        "card_token": {
-            "type": "string",
-            "description": "Unique token of the card to be updated."
-        },
-        "nickname": {
-            "type": "string",
-            "description": "New friendly name for the card."
-        },
-        "customer_id": {
-            "type": "string",
-            "description": "Customer identifier associated with the card."
-        },
-        "routing_id": {
-            "type": "string",
-            "description": "Optional custom routing ID for the API request."
-        }
-    }
-}
-
-juspay_card_info_schema = {
-    "type": "object",
-    "required": ["bin"],
-    "properties": {
-        "bin": {
-            "type": "string",
-            "description": "First 6-9 digits of the card number (BIN)."
-        },
-        "routing_id": {
-            "type": "string",
-            "description": "Optional custom routing ID for the API request."
-        }
-    }
-}
-
-juspay_bin_list_schema = {
-    "type": "object",
-    "properties": {
-        "auth_type": {
-            "type": "string",
-            "description": "Authentication type (e.g., 'OTP').",
-            "default": "OTP"
-        },
-        "routing_id": {
-            "type": "string",
-            "description": "Optional custom routing ID for the API request."
-        }
-    }
-}
-
-juspay_saved_payment_methods_schema = {
-    "type": "object",
-    "required": ["customer_id"],
-    "properties": {
-        "customer_id": {
-            "type": "string",
-            "description": "Unique identifier of the customer whose payment methods to retrieve."
-        },
-        "payment_method": {
-            "type": "array",
-            "description": "List of payment method types to retrieve.",
-            "items": {
-                "type": "string",
-                "enum": ["UPI_COLLECT"]
-            },
-            "default": ["UPI_COLLECT"]
-        },
-        "routing_id": {
-            "type": "string",
-            "description": "Optional custom routing ID for the API request."
-        }
-    }
-}
-
-juspay_upi_collect_schema = {
-    "type": "object",
-    "required": ["order_id", "merchant_id", "upi_vpa"],
-    "properties": {
-        "order_id": {
-            "type": "string",
-            "description": "Unique identifier for the order."
-        },
-        "merchant_id": {
-            "type": "string",
-            "description": "Merchant identifier."
-        },
-        "upi_vpa": {
-            "type": "string",
-            "description": "UPI Virtual Payment Address of the customer."
-        },
-        "redirect_after_payment": {
-            "type": "boolean",
-            "description": "Whether to redirect after payment.",
-            "default": True
-        },
-        "routing_id": {
-            "type": "string",
-            "description": "Optional custom routing ID for the API request."
-        }
-    }
-}
-
-juspay_verify_vpa_schema = {
-    "type": "object",
-    "required": ["vpa", "merchant_id"],
-    "properties": {
-        "vpa": {
-            "type": "string",
-            "description": "UPI Virtual Payment Address to verify."
-        },
-        "merchant_id": {
-            "type": "string",
-            "description": "Merchant identifier."
-        },
-        "routing_id": {
-            "type": "string",
-            "description": "Optional custom routing ID for the API request."
-        }
-    }
-}
-
-juspay_upi_intent_schema = {
-    "type": "object",
-    "required": ["order_id", "merchant_id"],
-    "properties": {
-        "order_id": {
-            "type": "string",
-            "description": "Unique identifier for the order."
-        },
-        "merchant_id": {
-            "type": "string",
-            "description": "Merchant identifier."
-        },
-        "upi_app": {
-            "type": "string",
-            "description": "Specific UPI app to open (e.g., 'com.phonepe.app')."
-        },
-        "sdk_params": {
-            "type": "boolean",
-            "description": "Whether to include SDK parameters in the response.",
-            "default": True
-        },
-        "redirect_after_payment": {
-            "type": "boolean",
-            "description": "Whether to redirect after payment.",
-            "default": True
-        },
-        "routing_id": {
-            "type": "string",
-            "description": "Optional custom routing ID for the API request."
-        }
-    }
-}
-
-juspay_list_offers_schema = {
-    "type": "object",
-    "required": ["order", "payment_method_info"],
-    "properties": {
-        "order": {
-            "type": "object",
-            "required": ["order_id", "amount", "currency"],
-            "properties": {
-                "order_id": {"type": "string", "description": "Unique identifier for the order."},
-                "amount": {"type": "string", "description": "Order amount as a string (e.g., '12000')."},
-                "currency": {"type": "string", "description": "Currency code (e.g., 'INR')."}
-            }
-        },
-        "payment_method_info": {
-            "type": "array",
-            "description": "List of payment methods to check offer eligibility for.",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "payment_method_type": {"type": "string", "description": "Type of payment method (e.g., 'CARD', 'UPI')."},
-                    "payment_method_reference": {"type": "string", "description": "Reference identifier for the payment method."},
-                    "payment_method": {"type": "string", "description": "Specific payment method (e.g., 'VISA', 'UPI')."},
-                    "card_number": {"type": "string", "description": "Card number (for CARD payment method)."},
-                    "bank_code": {"type": "string", "description": "Bank code (for CARD payment method)."},
-                    "card_type": {"type": "string", "description": "Type of card (e.g., 'CREDIT', 'DEBIT')."},
-                    "card_token": {"type": "string", "description": "Card token for saved cards."},
-                    "upi_vpa": {"type": "string", "description": "UPI Virtual Payment Address (for UPI payment method)."},
-                    "upi_app": {"type": "string", "description": "UPI app package name (for UPI_PAY)."},
-                    "txn_type": {"type": "string", "description": "Transaction type (e.g., 'UPI_COLLECT', 'UPI_PAY')."},
-                    "is_emi": {"type": "string", "description": "Whether this is an EMI payment."},
-                    "emi_bank": {"type": "string", "description": "Bank offering EMI."},
-                    "emi_tenure": {"type": "string", "description": "EMI tenure in months."}
-                }
-            }
-        },
-        "customer": {
-            "type": "object",
-            "properties": {
-                "id": {"type": "string", "description": "Customer identifier."},
-                "email": {"type": "string", "description": "Customer email address."},
-                "mobile": {"type": "string", "description": "Customer mobile number."}
-            }
-        },
-        "offer_code": {
-            "type": "string",
-            "description": "Coupon or offer code to apply."
-        },
-        "routing_id": {
-            "type": "string",
-            "description": "Optional custom routing ID for the API request."
-        }
-    }
-}
-
-juspay_offer_order_status_schema = {
-    "type": "object",
-    "required": ["order_id"],
-    "properties": {
-        "order_id": {
-            "type": "string",
-            "description": "Unique identifier for the order to check status with offer details."
-        },
-        "routing_id": {
-            "type": "string",
-            "description": "Optional custom routing ID for the API request."
-        }
-    }
 }

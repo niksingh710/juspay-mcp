@@ -49,6 +49,9 @@ ENDPOINTS = {
     # Offer APIs
     "offer_list": f"{JUSPAY_BASE_URL}/v1/offers/list",
     "offer_order_status": f"{JUSPAY_BASE_URL}/orders/{{order_id}}",
+
+    # Wallet APIs
+    "list_wallets": f"{JUSPAY_BASE_URL}/{{customer_id}}/wallets"
 }
 
 def verify_env_vars():

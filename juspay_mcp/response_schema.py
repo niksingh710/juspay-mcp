@@ -489,3 +489,96 @@ offer_order_status_response_schema = {
         "effective_amount": {"type": "number", "description": "Effective amount after offers."}
     }
 }
+
+list_wallets_response_schema = {
+    "type": "object",
+    "properties": {
+      "list": {
+        "type": "array",
+        "description": "List of wallet accounts associated with the customer.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "wallet": {
+              "type": "string",
+              "description": "Name of the wallet provider (e.g., 'MOBIKWIK', 'PAYTM')."
+            },
+            "token": {
+              "type": "string",
+              "description": "Token associated with the wallet account."
+            },
+            "last_refreshed": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp when the wallet information was last refreshed."
+            },
+            "juspay_bank_code": {
+              "type": "string",
+              "description": "Juspay's internal bank code for the wallet."
+            },
+            "object": {
+              "type": "string",
+              "description": "Type of the object, typically 'wallet_account'."
+            },
+            "id": {
+              "type": "string",
+              "description": "Unique identifier for the wallet account."
+            },
+            "current_balance": {
+              "type": "number",
+              "description": "Current balance available in the wallet."
+            },
+            "sub_details": {
+              "type": "array",
+              "description": "Detailed information about sub-accounts or payment methods within the wallet.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "payment_method": {
+                    "type": "string",
+                    "description": "Type of the payment method (e.g., 'PAYTM_POSTPAID')."
+                  },
+                  "payment_method_type": {
+                    "type": "string",
+                    "description": "Category of the payment method, typically 'WALLET'."
+                  },
+                  "last_refreshed": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Timestamp when the sub-account information was last refreshed."
+                  },
+                  "current_balance": {
+                    "type": "number",
+                    "description": "Current balance available in the sub-account."
+                  }
+                },
+                "required": ["payment_method", "payment_method_type", "last_refreshed", "current_balance"]
+              }
+            },
+            "linked": {
+              "type": "boolean",
+              "description": "Indicates whether the wallet is linked to the customer's account."
+            }
+          },
+          "required": ["wallet", "token", "last_refreshed", "juspay_bank_code", "object", "id", "current_balance", "sub_details", "linked"]
+        }
+      },
+      "offset": {
+        "type": "integer",
+        "description": "Offset used for pagination."
+      },
+      "count": {
+        "type": "integer",
+        "description": "Number of wallet accounts returned in the response."
+      },
+      "total": {
+        "type": "integer",
+        "description": "Total number of wallet accounts available."
+      },
+      "object": {
+        "type": "string",
+        "description": "Type of the response object, typically 'list'."
+      }
+    },
+    "required": ["list", "offset", "count", "total"]
+}

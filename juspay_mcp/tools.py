@@ -6,6 +6,8 @@ from mcp.server.sse import SseServerTransport
 
 from juspay_mcp import schema, response_schema
 from juspay_mcp.api import *
+import juspay_mcp.api_schema as api_schema
+import juspay_mcp.utils as util
 
 app = Server("juspay")
 
@@ -100,114 +102,97 @@ AVAILABLE_TOOLS = [
         "schema": schema.juspay_create_moto_txn_schema,
         "handler": order.create_moto_txn_juspay
     },
-    {
-        "name": "add_card_juspay",
-        "description": f"""
-            Adds a new card to the Juspay system for a customer and returns with below json schema:
-                {json.dumps(response_schema.add_card_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_add_card_schema,
-        "handler": card.add_card_juspay
-    },
-    {
-        "name": "list_cards_juspay",
-        "description": f"""
-            Retrieves all stored cards for a specific customer and returns with below json schema:
-                {json.dumps(response_schema.list_cards_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_list_cards_schema,
-        "handler": card.list_cards_juspay
-    },
-    {
-        "name": "delete_card_juspay",
-        "description": f"""
-            Deletes a saved card from the Juspay system and returns with below json schema:
-                {json.dumps(response_schema.delete_card_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_delete_card_schema,
-        "handler": card.delete_card_juspay
-    },
-    {
-        "name": "update_card_juspay",
-        "description": f"""
-            Updates details for a saved card and returns with below json schema:
-                {json.dumps(response_schema.update_card_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_update_card_schema,
-        "handler": card.update_card_juspay
-    },
-    {
-        "name": "get_card_info_juspay",
-        "description": f"""
-            Retrieves information about a specific card BIN (Bank Identification Number) and returns with below json schema:
-                {json.dumps(response_schema.card_info_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_card_info_schema,
-        "handler": card.get_card_info_juspay
-    },
-    {
-        "name": "get_bin_list_juspay",
-        "description": f"""
-            Retrieves a list of eligible BINs for a specific authentication type and returns with below json schema:
-                {json.dumps(response_schema.bin_list_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_bin_list_schema,
-        "handler": card.get_bin_list_juspay
-    },
-    {
-        "name": "get_saved_payment_methods",
-        "description": f"""
-            Retrieves a customer's saved payment methods and returns with below json schema:
-                {json.dumps(response_schema.saved_payment_methods_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_saved_payment_methods_schema,
-        "handler": upi.get_saved_payment_methods
-    },
-    {
-        "name": "upi_collect",
-        "description": f"""
-            Creates a UPI Collect transaction for requesting payment from a customer's UPI ID and returns with below json schema:
-                {json.dumps(response_schema.upi_collect_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_upi_collect_schema,
-        "handler": upi.upi_collect
-    },
-    {
-        "name": "verify_vpa",
-        "description": f"""
-            Verifies if a UPI Virtual Payment Address (VPA) is valid and returns with below json schema:
-                {json.dumps(response_schema.verify_vpa_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_verify_vpa_schema,
-        "handler": upi.verify_vpa
-    },
-    {
-        "name": "upi_intent",
-        "description": f"""
-            Creates a UPI Intent transaction for payment using UPI apps and returns with below json schema:
-                {json.dumps(response_schema.upi_intent_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_upi_intent_schema,
-        "handler": upi.upi_intent
-    },
-    {
-        "name": "list_offers_juspay",
-        "description": f"""
-            Lists available offers for a given order with optional coupon code and returns with below json schema:
-                {json.dumps(response_schema.list_offers_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_list_offers_schema,
-        "handler": offer.list_offers_juspay
-    },
-    {
-        "name": "get_offer_order_status_juspay",
-        "description": f"""
-            Retrieves the status of an order with offer details and returns with below json schema:
-                {json.dumps(response_schema.offer_order_status_response_schema, indent=2)}
-        """,
-        "schema": schema.juspay_offer_order_status_schema,
-        "handler": offer.get_offer_order_status_juspay
-    }
+    util.make_api_config(
+        name="add_card_juspay",
+        description="Adds a new card to the Juspay system for a customer.",
+        model=api_schema.card.JuspayAddCardPayload,
+        handler=card.add_card_juspay,
+        response_schema=response_schema.add_card_response_schema,
+    ),
+    util.make_api_config(
+        name="list_cards_juspay",
+        description="Retrieves all stored cards for a specific customer.",
+        model=api_schema.card.JuspayListCardsPayload,
+        handler=card.list_cards_juspay,
+        response_schema=response_schema.list_cards_response_schema,
+    ),
+    util.make_api_config(
+        name="delete_card_juspay",
+        description="Deletes a saved card from the Juspay system.",
+        model=api_schema.card.JuspayDeleteCardPayload,
+        handler=card.delete_card_juspay,
+        response_schema=response_schema.delete_card_response_schema,
+    ),
+    util.make_api_config(
+        name="update_card_juspay",
+        description="Updates details for a saved card.",
+        model=api_schema.card.JuspayUpdateCardPayload,
+        handler=card.update_card_juspay,
+        response_schema=response_schema.update_card_response_schema,
+    ),
+    util.make_api_config(
+        name="get_card_info_juspay",
+        description="Retrieves information about a specific card BIN (Bank Identification Number).",
+        model=api_schema.card.JuspayCardInfoPayload,
+        handler=card.get_card_info_juspay,
+        response_schema=response_schema.card_info_response_schema,
+    ),
+    util.make_api_config(
+        name="get_bin_list_juspay",
+        description="Retrieves a list of eligible BINs for a specific authentication type.",
+        model=api_schema.card.JuspayBinListPayload,
+        handler=card.get_bin_list_juspay,
+        response_schema=response_schema.bin_list_response_schema,
+    ),
+    util.make_api_config(
+        name="get_saved_payment_methods",
+        description="Retrieves a customer's saved payment methods.",
+        model=api_schema.upi.JuspaySavedPaymentMethodsPayload,
+        handler=upi.get_saved_payment_methods,
+        response_schema=response_schema.saved_payment_methods_response_schema,
+    ),
+    util.make_api_config(
+        name="upi_collect",
+        description="Creates a UPI Collect transaction for requesting payment from a customer's UPI ID.",
+        model=api_schema.upi.JuspayUpiCollectPayload,
+        handler=upi.upi_collect,
+        response_schema=response_schema.upi_collect_response_schema,
+    ),
+    util.make_api_config(
+        name="verify_vpa",
+        description="Verifies if a UPI Virtual Payment Address (VPA) is valid.",
+        model=api_schema.upi.JuspayVerifyVpaPayload,
+        handler=upi.verify_vpa,
+        response_schema=response_schema.verify_vpa_response_schema,
+    ),
+    util.make_api_config(
+        name="upi_intent",
+        description="Creates a UPI Intent transaction for payment using UPI apps.",
+        model=api_schema.upi.JuspayUpiIntentPayload,
+        handler=upi.upi_intent,
+        response_schema=response_schema.upi_intent_response_schema,
+    ),
+    util.make_api_config(
+        name="list_offers_juspay",
+        description="Lists available offers for a given order with optional coupon code.",
+        model=api_schema.offer.JuspayListOffersPayload,
+        handler=offer.list_offers_juspay,
+        response_schema=response_schema.list_offers_response_schema,
+    ),
+    util.make_api_config(
+        name="get_offer_order_status_juspay",
+        description="Retrieves the status of an order along with offer details.",
+        model=api_schema.offer.JuspayOfferOrderStatusPayload,
+        handler=offer.get_offer_order_status_juspay,
+        response_schema=response_schema.offer_order_status_response_schema,
+    ),
+    util.make_api_config(
+        name="list_wallets",
+        description="Fetches all wallets linked to the given customer.",
+        model=api_schema.wallet.ListWalletsPayload,
+        handler=wallet.list_wallets,
+        response_schema=response_schema.list_wallets_response_schema,
+    ),
 ]
 
 @app.list_tools()
@@ -239,6 +224,16 @@ async def handle_tool_calls(name: str, arguments: dict) -> list[types.TextConten
         handler = tool_entry["handler"]
         if not handler:
             raise ValueError(f"No handler defined for tool: {name}")
+
+        model_cls = tool_entry.get("model")
+        if model_cls:
+            try:
+                payload = model_cls(**arguments)  
+                payload_dict = payload.dict(exclude_none=True) 
+            except Exception as e:
+                raise ValueError(f"Validation error: {str(e)}")
+        else:
+            payload_dict = arguments 
         
         meta_info = arguments.pop("juspay_meta_info", None)
 
