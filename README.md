@@ -184,8 +184,6 @@ These tools interact with Juspay's merchant dashboard functionalities.
 
 # 1. Clone the repository
 
-# Replace <your-repo-url> with the actual Git repository URL
-
 git  clone https://github.com/juspay/juspay-mcp.git
 cd  juspay-mcp
 
