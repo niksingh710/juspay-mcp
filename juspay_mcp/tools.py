@@ -1,6 +1,7 @@
 import json
 import mcp.types as types
 import inspect
+import logging
 from mcp.server.lowlevel import Server
 from mcp.server.sse import SseServerTransport
 
@@ -9,6 +10,7 @@ from juspay_mcp.api import *
 import juspay_mcp.api_schema as api_schema
 import juspay_mcp.utils as util
 
+logger = logging.getLogger(__name__)
 app = Server("juspay")
 
 AVAILABLE_TOOLS = [
@@ -202,8 +204,7 @@ async def list_my_tools() -> list[types.Tool]:
 
 @app.call_tool()
 async def handle_tool_calls(name: str, arguments: dict) -> list[types.TextContent]:
-    print(f"Calling tool: {name} with args: {arguments}")
-
+    logger.info(f"Calling tool: {name} with args: {arguments}")
     try:
         tool_entry = next((t for t in AVAILABLE_TOOLS if t["name"] == name), None)
         if not tool_entry:
@@ -251,5 +252,5 @@ async def handle_tool_calls(name: str, arguments: dict) -> list[types.TextConten
         return [types.TextContent(type="text", text=json.dumps(response))]
 
     except Exception as e:
-        print(f"Error executing tool {name}: {e}")
+        logger.error(f"Error executing tool {name}: {e}")
         return [types.TextContent(type="text", text=f"ERROR: Tool execution failed: {str(e)}")]

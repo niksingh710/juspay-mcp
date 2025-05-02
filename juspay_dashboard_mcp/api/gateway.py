@@ -1,9 +1,4 @@
-import logging
-
 from juspay_dashboard_mcp.api.utils import post, get_juspay_host_from_api
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 async def list_configured_gateways_juspay(payload: dict) -> dict:
     """
@@ -131,8 +126,6 @@ async def list_gateway_scheme_juspay(payload: dict) -> dict:
     api_url = f"{host}/api/ec/v2/gateway/scheme/list"
     return await post(api_url, {})
 
-
-
 async def get_merchant_gateways_pm_details_juspay(payload: dict) -> dict:
     """
     Fetches all gateways and their supported payment methods for the merchant.
@@ -149,4 +142,3 @@ async def get_merchant_gateways_pm_details_juspay(payload: dict) -> dict:
     host = await get_juspay_host_from_api()
     api_url = f"{host}/api/ec/v1/gateway/paymentMethods"
     return await post(api_url, {})
-

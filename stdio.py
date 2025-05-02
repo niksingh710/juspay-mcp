@@ -1,9 +1,13 @@
 import asyncio
 import os
+import logging 
 import mcp.server.stdio
 import mcp.types as types
 from mcp.server.lowlevel import NotificationOptions
 from mcp.server.models import InitializationOptions
+
+logger = logging.getLogger(__name__)
+
 if os.getenv("JUSPAY_MCP_TYPE") == "DASHBOARD":
     from juspay_dashboard_mcp.tools import app
 else:
@@ -11,7 +15,7 @@ else:
 
 async def run_stdio():
     """Runs the MCP server using stdio for input/output."""
-    print("Starting Juspay Tools in stdio mode...")
+    logger.info("Starting Juspay Tools in stdio mode...")
     async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
         await app.run(
             read_stream,
@@ -27,4 +31,8 @@ async def run_stdio():
         )
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
     asyncio.run(run_stdio())

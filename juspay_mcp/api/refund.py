@@ -45,7 +45,7 @@ async def create_refund_juspay(payload: dict) -> dict:
         "unique_request_id": unique_request_id,
         "amount": amount,
     }
-    await post(api_url, refund_data, routing_id)
+    return await post(api_url, refund_data, routing_id)
 
 async def create_txn_refund_juspay(payload: dict) -> dict:
     """
@@ -89,5 +89,5 @@ async def create_txn_refund_juspay(payload: dict) -> dict:
     }
     
     api_url = ENDPOINTS["txn_refund"]
-    await post(api_url, refund_data, routing_id)
+    return await post(api_url, refund_data, routing_id)
 

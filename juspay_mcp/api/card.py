@@ -77,7 +77,7 @@ async def list_cards_juspay(payload: dict) -> dict:
     if payload.get("options.check_cvv_less_support"):
         api_url += "&options.check_cvv_less_support=true"
     
-    await call(api_url, routing_id)
+    return await call(api_url, routing_id)
 
 async def delete_card_juspay(payload: dict) -> dict:
     """
@@ -108,7 +108,7 @@ async def delete_card_juspay(payload: dict) -> dict:
         payload.pop("routing_id")
         
     api_url = ENDPOINTS["card_delete"]
-    await post(api_url, payload, routing_id)
+    return await post(api_url, payload, routing_id)
 
 async def update_card_juspay(payload: dict) -> dict:
     """
@@ -141,7 +141,7 @@ async def update_card_juspay(payload: dict) -> dict:
         payload.pop("routing_id")
         
     api_url = ENDPOINTS["card_update"]
-    await post(api_url, payload, routing_id)
+    return await post(api_url, payload, routing_id)
 
 async def get_card_info_juspay(payload: dict) -> dict:
     """
@@ -170,7 +170,7 @@ async def get_card_info_juspay(payload: dict) -> dict:
     routing_id = payload.get("routing_id")
     
     api_url = f"{ENDPOINTS['card_info']}/{bin_number}"
-    await call(api_url, routing_id)
+    return await call(api_url, routing_id)
 
 async def get_bin_list_juspay(payload: dict) -> dict:
     """
@@ -194,4 +194,4 @@ async def get_bin_list_juspay(payload: dict) -> dict:
     routing_id = payload.get("routing_id")
     
     api_url = f"{ENDPOINTS['bin_list']}?auth_type={auth_type}"
-    await call(api_url, routing_id)
+    return await call(api_url, routing_id)

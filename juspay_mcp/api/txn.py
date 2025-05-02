@@ -75,4 +75,4 @@ async def create_moto_txn_juspay(payload: dict) -> dict:
         raise ValueError("For MOTO transactions, 'auth_type' must be 'MOTO'.")
     
     # Use the standard txn creation function with additional MOTO parameters
-    await create_txn_juspay(payload)
+    return await create_txn_juspay(payload)

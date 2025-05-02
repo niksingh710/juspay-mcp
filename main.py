@@ -3,6 +3,7 @@ import os
 import uvicorn
 import dotenv
 import asyncio
+import logging
 
 from starlette.applications import Starlette
 from starlette.routing import Mount, Route
@@ -16,6 +17,14 @@ from stdio import run_stdio
 # Load environment variables.
 dotenv.load_dotenv()
 
+# Configure logging.
+logging.basicConfig(
+    level=logging.INFO, 
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+
+logger = logging.getLogger(__name__)
+
 @click.command()
 @click.option("--host", default="0.0.0.0", help="Host to bind the server to.")
 @click.option("--port", default=8000, type=int, help="Port to listen on for SSE.")
@@ -26,6 +35,7 @@ def main(host: str, port: int, mode: str):
     
     if mode == "stdio":
         # Run in stdio mode
+        logger.info("Running in stdio mode.")
         asyncio.run(run_stdio())
         return
     
@@ -36,19 +46,18 @@ def main(host: str, port: int, mode: str):
         sse_endpoint_path = "/juspay-dashboard"
     else:
         sse_endpoint_path = "/juspay"
-
     
     # Create the SSE transport handler.
     sse_transport_handler = SseServerTransport(message_endpoint_path)
     
     async def handle_sse_connection(request):
         """Handles a single client SSE connection and runs the MCP session."""
-        print(f"New SSE connection from: {request.client}")
+        logging.info(f"New SSE connection from: {request.client}")
         
         async with sse_transport_handler.connect_sse(
             request.scope, request.receive, request._send
         ) as streams:
-            print(f"MCP Session starting for {request.client}")
+            logging.info(f"MCP Session starting for {request.client}")
             try:
                 await app.run(
                     streams[0],
@@ -56,9 +65,9 @@ def main(host: str, port: int, mode: str):
                     app.create_initialization_options()
                 )
             except Exception as e:
-                print(f"Error during MCP session for {request.client}: {e}")
+                logging.error(f"Error during MCP session for {request.client}: {e}")
             finally:
-                print(f"MCP Session ended for {request.client}")
+                logging.info(f"MCP Session ended for {request.client}")
 
     # Create a Starlette application with the desired routes.
     starlette_app = Starlette(
@@ -69,7 +78,7 @@ def main(host: str, port: int, mode: str):
         ],
     )
 
-    print(f"Starting MCP server on http://{host}:{port}{sse_endpoint_path}")
+    logger.info(f"Starting MCP server on http://{host}:{port}{sse_endpoint_path}")
     uvicorn.run(starlette_app, host=host, port=port)
 
 if __name__ == "__main__":
