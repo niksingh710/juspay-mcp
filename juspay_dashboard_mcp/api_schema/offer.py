@@ -1,16 +1,16 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, Field
 
 from juspay_dashboard_mcp.api_schema.headers import WithHeaders
 
 class JuspayGetOfferDetailsPayload(WithHeaders):
-    offerId: str = Field(
+    offer_ids: List[str] = Field(
         ...,
-        description="The unique identifier of the offer to retrieve details for."
+        description="List of unique identifiers of the offers to retrieve details for."
     )
-    merchantId: Optional[str] = Field(
-        None,
-        description="Optional merchant ID associated with the offer."
+    merchant_id: str = Field(
+        ...,
+        description="Merchant ID associated with the offer."
     )
     isBatch: Optional[bool] = Field(
         False,

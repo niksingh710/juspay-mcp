@@ -1,8 +1,8 @@
 import httpx
-from juspay_dashboard_mcp.config import get_common_headers
+from juspay_dashboard_mcp.config import get_common_headers, JUSPAY_BASE_URL
 
 async def call(api_url: str, additional_headers: dict = None) -> dict:
-    headers = get_common_headers()
+    headers = get_common_headers({})
     
     if additional_headers:
         headers.update(additional_headers)
@@ -24,8 +24,11 @@ async def call(api_url: str, additional_headers: dict = None) -> dict:
             print(f"Error during Juspay API call: {e}")
             raise Exception(f"Failed to call Juspay API: {e}") from e
 
-async def post(api_url: str, payload: dict) -> dict:
+async def post(api_url: str, payload: dict,additional_headers: dict = None) -> dict:
     headers = get_common_headers(payload) 
+
+    if additional_headers:
+        headers.update(additional_headers)
 
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
@@ -54,21 +57,4 @@ async def get_juspay_host_from_api(token: str = None, headers: dict = None) -> s
     Returns:
         str: The Juspay host URL.
     """
-    return "https://portal.juspay.in/"
-    # api_url = "https://portal.juspay.in/api/ec/v1/validate/token"
-    # request_data = {"token": token}
-    # print(f"calling with token {request_data}")
-    # # Use default headers if not provided
-    # if headers is None:
-    #     headers = {
-    #         "Content-Type": "application/json",
-    #         "Referer": "https://portal.juspay.in/",
-    #     }
-    # async with httpx.AsyncClient(timeout=30.0) as client:
-    #     response = await client.post(api_url, headers=headers, json=request_data)
-    #     response.raise_for_status()
-    #     resp_json = response.json()
-    #     parent_entity_context = resp_json.get("parentEntityContext")
-    #     if parent_entity_context and parent_entity_context.upper() == "JUSPAY":
-    #         return "https://euler-x.internal.svc.k8s.mum.juspay.net/"
-    #     return "https://portal.juspay.in/"
+    return JUSPAY_BASE_URL

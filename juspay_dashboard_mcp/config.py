@@ -8,16 +8,11 @@ JUSPAY_ENV = os.getenv("JUSPAY_ENV", "sandbox").lower()
 JUSPAY_WEB_LOGIN_TOKEN = os.getenv("JUSPAY_WEB_LOGIN_TOKEN")
 
 if JUSPAY_ENV == "production":
-    JUSPAY_BASE_URL = os.getenv("JUSPAY_PROD_BASE_URL", "https://euler-x.internal.svc.k8s.mum.juspay.net")
+    JUSPAY_BASE_URL = os.getenv("JUSPAY_PROD_BASE_URL", "https://portal.juspay.in")
     print("Using Juspay Production Environment")
 else:
-    JUSPAY_BASE_URL = os.getenv("JUSPAY_SANDBOX_BASE_URL", "https://portal.juspay.in")
+    JUSPAY_BASE_URL = os.getenv("JUSPAY_SANDBOX_BASE_URL", "https://sandbox.portal.juspay.in")
     print("Using Juspay Sandbox Environment")
-
-
-ENDPOINTS = {
-    "list_configured_gateways": ""
-}
 
 def verify_env_vars():
     """ 
@@ -45,7 +40,7 @@ def get_common_headers(payload: dict):
         "x-web-logintoken": f"{JUSPAY_WEB_LOGIN_TOKEN}",
     }
 
-    if payload.get("tentant_id"):
+    if payload.get("tenant_id"):
         default_headers["x-tenant-id"] = payload.pop("tenant_id")
 
     if payload.get("cookie"):

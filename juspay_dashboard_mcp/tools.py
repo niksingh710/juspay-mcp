@@ -41,24 +41,10 @@ AVAILABLE_TOOLS = [
         response_schema=None,
     ),
     util.make_api_config(
-        name="juspay_gateway_downtime",
-        description="This API retrieves downtime information for a gateway using order_id and merchant_id. Optionally accepts txn_uuid.",
-        model=api_schema.gateway.JuspayGatewayDowntimePayload,
-        handler=gateway.get_gateway_downtime,
-        response_schema=None,
-    ),
-    util.make_api_config(
         name="juspay_get_merchant_gateways_pm_details",
         description="This API fetches all gateways and their supported payment methods for the merchant.",
         model=api_schema.gateway.JuspayGetMerchantGatewaysPmDetailsPayload,
         handler=gateway.get_merchant_gateways_pm_details_juspay,
-        response_schema=None,
-    ),
-    util.make_api_config(
-        name="juspay_fetch_feature_details",
-        description="This API provides comprehensive information for a specific feature ID, including overview, description, FAQs, usage by other merchants, supported PGs/PMTs/platforms, and related features.",
-        model=api_schema.feature.JuspayFetchFeatureDetailsPayload,
-        handler=feature.fetch_feature_details_juspay,
         response_schema=None,
     ),
     util.make_api_config(
@@ -153,13 +139,6 @@ AVAILABLE_TOOLS = [
         response_schema=None,
     ),
     util.make_api_config(
-        name="juspay_fetch_feature_list",
-        description="Lists all marketplace features with high-level details such as feature summary, supported PMTs and compatible products.",
-        model=api_schema.feature.JuspayFetchFeatureListPayload,
-        handler=feature.fetch_feature_list_juspay,
-        response_schema=None,
-    ),
-    util.make_api_config(
         name="juspay_alert_details",
         description="Provides detailed information for a specific alert ID, including source, monitored metrics, and applied filters.",
         model=api_schema.alert.JuspayAlertDetailsPayload,
@@ -185,20 +164,6 @@ AVAILABLE_TOOLS = [
         description="Returns complete details for a given order ID.",
         model=api_schema.orders.JuspayGetOrderDetailsPayload,
         handler=orders.get_order_details_juspay,
-        response_schema=None,
-    ),
-    util.make_api_config(
-        name="juspay_list_payout_orders",
-        description="Retrieves a list of payout orders created within a specified time range (mandatory). Supports additional filters from the Q API (payout domain) such as order_status and fulfillment_method.",
-        model=api_schema.orders.JuspayListPayoutOrdersPayload,
-        handler=orders.list_payout_orders_juspay,
-        response_schema=None,
-    ),
-    util.make_api_config(
-        name="juspay_payout_order_details",
-        description="Returns complete details for a given payout order ID.",
-        model=api_schema.orders.JuspayPayoutOrderDetailsPayload,
-        handler=orders.payout_order_details_juspay,
         response_schema=None,
     ),
     util.make_api_config(
