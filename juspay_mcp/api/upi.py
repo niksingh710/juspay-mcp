@@ -33,7 +33,7 @@ async def get_saved_payment_methods(payload: dict) -> dict:
     api_url = ENDPOINTS["saved_payment_methods"].format(customer_id=customer_id)
     
     body = {"payment_method": payment_method}
-    await post(api_url, body, routing_id)
+    return await post(api_url, body, routing_id)
 
 async def upi_collect(payload: dict) -> dict:
     """
@@ -77,7 +77,7 @@ async def upi_collect(payload: dict) -> dict:
         payload.pop("routing_id")
     
     api_url = ENDPOINTS["create_txn"]
-    await post(api_url, payload, routing_id)
+    return await post(api_url, payload, routing_id)
 
 async def verify_vpa(payload: dict) -> dict:
     """
@@ -113,7 +113,7 @@ async def verify_vpa(payload: dict) -> dict:
         payload.pop("routing_id")
     
     api_url = ENDPOINTS["verify_vpa"]
-    await post(api_url, payload, routing_id)
+    return await post(api_url, payload, routing_id)
 
 async def upi_intent(payload: dict) -> dict:
     """
@@ -160,4 +160,4 @@ async def upi_intent(payload: dict) -> dict:
         payload.pop("routing_id")
     
     api_url = ENDPOINTS["create_txn"]
-    await post(api_url, payload, routing_id)
+    return await post(api_url, payload, routing_id)

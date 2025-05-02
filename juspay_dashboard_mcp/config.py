@@ -1,6 +1,9 @@
 import os
 import base64
 import dotenv
+import logging 
+
+logger = logging.getLogger(__name__)
 
 dotenv.load_dotenv()
 
@@ -9,10 +12,10 @@ JUSPAY_WEB_LOGIN_TOKEN = os.getenv("JUSPAY_WEB_LOGIN_TOKEN")
 
 if JUSPAY_ENV == "production":
     JUSPAY_BASE_URL = os.getenv("JUSPAY_PROD_BASE_URL", "https://portal.juspay.in")
-    print("Using Juspay Production Environment")
+    logger.info("Using Juspay Production Environment")
 else:
     JUSPAY_BASE_URL = os.getenv("JUSPAY_SANDBOX_BASE_URL", "https://sandbox.portal.juspay.in")
-    print("Using Juspay Sandbox Environment")
+    logger.info("Using Juspay Sandbox Environment")
 
 def verify_env_vars():
     """ 

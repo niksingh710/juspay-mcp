@@ -26,7 +26,7 @@ async def get_customer_juspay(payload: dict) -> dict:
         raise ValueError("The payload must include 'customer_id'.")
 
     api_url = ENDPOINTS["customer"].format(customer_id=customer_id)
-    await call(api_url, customer_id)
+    return await call(api_url, customer_id)
 
 async def create_customer_juspay(payload: dict) -> dict:
     """
@@ -63,7 +63,7 @@ async def create_customer_juspay(payload: dict) -> dict:
     if payload.get("get_client_auth_token"):
         payload["options.get_client_auth_token"] = "true"
     
-    await post(api_url, payload, routing_id)
+    return await post(api_url, payload, routing_id)
 
 async def update_customer_juspay(payload: dict) -> dict:
     """
@@ -101,4 +101,4 @@ async def update_customer_juspay(payload: dict) -> dict:
     routing_id = payload.get("routing_id", customer_id)
     
     api_url = ENDPOINTS["update_customer"].format(customer_id=customer_id)
-    await post(api_url, update_data, routing_id)
+    return await post(api_url, update_data, routing_id)

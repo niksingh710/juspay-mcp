@@ -1,9 +1,4 @@
-import logging
-
 from juspay_dashboard_mcp.api.utils import post, get_juspay_host_from_api
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 async def report_details_juspay(payload: dict) -> dict:
     """

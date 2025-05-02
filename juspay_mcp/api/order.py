@@ -31,7 +31,7 @@ async def order_status_api_juspay(payload: dict) -> dict:
     customer_id = payload.get("customer_id")
 
     api_url = ENDPOINTS["order_status"].format(order_id=order_id)
-    await call(api_url, customer_id)
+    return await call(api_url, customer_id)
 
 async def create_order_juspay(payload: dict) -> dict:
     """
@@ -81,7 +81,7 @@ async def create_order_juspay(payload: dict) -> dict:
     routing_id = payload.get("routing_id", payload.get("customer_id"))
     
     api_url = ENDPOINTS["create_order"]
-    await post(api_url, payload, routing_id)
+    return await post(api_url, payload, routing_id)
 
 async def update_order_juspay(payload: dict) -> dict:
     """
@@ -119,7 +119,7 @@ async def update_order_juspay(payload: dict) -> dict:
     routing_id = payload.get("routing_id", payload.get("customer_id"))
     
     api_url = ENDPOINTS["update_order"].format(order_id=order_id)
-    await post(api_url, update_data, routing_id)
+    return await post(api_url, update_data, routing_id)
 
 async def order_fulfillment_sync(payload: dict) -> dict:
     """
@@ -160,4 +160,4 @@ async def order_fulfillment_sync(payload: dict) -> dict:
         payload.pop("routing_id")
     
     api_url = ENDPOINTS["order_fulfillment"].format(order_id=order_id)
-    await post(api_url, payload, routing_id)
+    return await post(api_url, payload, routing_id)

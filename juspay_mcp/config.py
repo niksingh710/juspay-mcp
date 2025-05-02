@@ -1,7 +1,9 @@
 import os
 import base64
 import dotenv
+import logging 
 
+logger = logging.getLogger(__name__)
 dotenv.load_dotenv()
 
 JUSPAY_API_KEY = os.getenv("JUSPAY_API_KEY")
@@ -10,10 +12,10 @@ JUSPAY_ENV = os.getenv("JUSPAY_ENV", "sandbox").lower()
 
 if JUSPAY_ENV == "production":
     JUSPAY_BASE_URL = os.getenv("JUSPAY_PROD_BASE_URL", "https://api.juspay.in")
-    print("Using Juspay Production Environment")
+    logger.info("Using Juspay Production Environment")
 else:
     JUSPAY_BASE_URL = os.getenv("JUSPAY_SANDBOX_BASE_URL", "https://sandbox.juspay.in")
-    print("Using Juspay Sandbox Environment")
+    logger.info("Using Juspay Sandbox Environment")
 
 
 ENDPOINTS = {
@@ -26,7 +28,7 @@ ENDPOINTS = {
     "update_customer": f"{JUSPAY_BASE_URL}/customers/{{customer_id}}",
 
     # Order APIs
-    "order_status": f"{JUSPAY_BASE_URL}/order/status/{{order_id}}",
+    "order_status": f"{JUSPAY_BASE_URL}/orders/{{order_id}}",
     "create_order": f"{JUSPAY_BASE_URL}/orders",
     "update_order": f"{JUSPAY_BASE_URL}/orders/{{order_id}}",
     "order_fulfillment": f"{JUSPAY_BASE_URL}/orders/{{order_id}}/fulfillment",
@@ -57,6 +59,7 @@ ENDPOINTS = {
 def verify_env_vars():
     """Verifies that required environment variables are set."""
     if not JUSPAY_API_KEY or not JUSPAY_MERCHANT_ID:
+        logger.error("JUSPAY_API_KEY or JUSPAY_MERCHANT_ID not set in environment variables.")
         raise ValueError("JUSPAY_API_KEY and JUSPAY_MERCHANT_ID environment variables must be set.")
 
 def get_base64_auth():
