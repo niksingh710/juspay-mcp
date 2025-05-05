@@ -1,37 +1,30 @@
 name: Release Docker Images
-
 on:
   push:
     tags:
-      - 'v*'
-
+      - "v*"
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Build and Push juspay-dashboard-mcp Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/juspay-dashboard-mcp:latest -f Dockerfile.dashboard .
-          docker tag ${{ secrets.DOCKER_USERNAME }}/juspay-dashboard-mcp:latest ${{ secrets.DOCKER_USERNAME }}/juspay-dashboard-mcp:${GITHUB_REF_NAME}
-          docker push ${{ secrets.DOCKER_USERNAME }}/juspay-dashboard-mcp:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/juspay-dashboard-mcp:${GITHUB_REF_NAME}
-
+          docker build -t ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-dashboard-mcp:latest -f Dockerfile.dashboard .
+          docker tag ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-dashboard-mcp:latest ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-dashboard-mcp:${GITHUB_REF_NAME}
+          docker push ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-dashboard-mcp:latest
+          docker push ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-dashboard-mcp:${GITHUB_REF_NAME}
       - name: Build and Push juspay-mcp Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/juspay-mcp:latest .
-          docker tag ${{ secrets.DOCKER_USERNAME }}/juspay-mcp:latest ${{ secrets.DOCKER_USERNAME }}/juspay-mcp:${GITHUB_REF_NAME}
-          docker push ${{ secrets.DOCKER_USERNAME }}/juspay-mcp:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/juspay-mcp:${GITHUB_REF_NAME}
+          docker build -t ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-mcp:latest .
+          docker tag ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-mcp:latest ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-mcp:${GITHUB_REF_NAME}
+          docker push ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-mcp:latest
+          docker push ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-mcp:${GITHUB_REF_NAME}
