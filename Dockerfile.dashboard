@@ -2,14 +2,20 @@ FROM python:3.13.2-slim
 
 WORKDIR /app
 
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup --home /home/appuser appuser
+
 RUN pip install --upgrade pip \
  && pip install setuptools wheel
 
 COPY . /app
+RUN chown -R appuser:appgroup /app
 
-RUN pip install --no-cache-dir --no-build-isolation . --root-user-action=ignore
-
+ENV HOME=/home/appuser
 ENV JUSPAY_MCP_TYPE="DASHBOARD"
 ENV PYTHONUNBUFFERED=1
+
+USER appuser
+
+RUN pip install --no-cache-dir --no-build-isolation . --root-user-action=ignore
 
 ENTRYPOINT ["python", "stdio.py"]
