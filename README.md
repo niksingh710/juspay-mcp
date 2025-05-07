@@ -5,10 +5,8 @@
 A Model Context Protocol (MCP) server to interact with Juspay APIs. This package enables AI agents and other tools to leverage Juspay's capabilities for core payment processing and merchant dashboard interactions.
 
 ## Table of Contents
-## Table of Contents
 - [Juspay MCP Tools](#juspay-mcp-tools)
   - [Table of Contents](#table-of-contents)
-  - [Table of Contents](#table-of-contents-1)
   - [Introduction](#introduction)
   - [Key Features](#key-features)
   - [Getting Started](#getting-started)
