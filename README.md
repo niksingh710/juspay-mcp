@@ -299,7 +299,6 @@ The MCP server translates AI assistant requests into properly formatted API call
 | Tool Name                 | Description                                                                     |
 | ------------------------- | ------------------------------------------------------------------------------- |
 | `juspay_get_user`         | Fetches details for a specific user by user ID.                                 |
-| `juspay_get_user_details` | Retrieves detailed information for a specific user.                             |
 | `juspay_list_users_v2`    | Retrieves a list of users associated with a merchant, with optional pagination. |
 
 #### Settings Management
