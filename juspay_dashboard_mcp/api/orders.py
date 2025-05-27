@@ -73,8 +73,7 @@ async def list_orders_v4_juspay(payload: dict) -> dict:
         "filters": {
             "dateCreated": {
                 "lte": date_to_str,
-                "gte": date_from_str,
-                "opt": "last_30_mins"
+                "gte": date_from_str
             }
         },
         "order": [["date_created", "DESC"]],
