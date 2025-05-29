@@ -22,7 +22,7 @@ async def list_orders_v4_juspay(payload: dict) -> dict:
             - dateFrom: Start date/time in ISO format (e.g., '2025-04-15T18:30:00Z')
             - dateTo: End date/time in ISO format (e.g., '2025-04-16T15:06:00Z')
             - offset: Pagination offset (optional, default 0)
-            - domain: Domain for query (optional, default 'ordersELS')
+            - domain: Domain for query (default 'txnsELS')
             - paymentStatus: Optional filter for payment status
             - orderType: Optional filter for order type
 
@@ -53,30 +53,32 @@ async def list_orders_v4_juspay(payload: dict) -> dict:
     date_from_ts = int(date_from_dt.timestamp())
     date_to_ts = int(date_to_dt.timestamp())
 
+    qFilters = payload.get("qFilters", {
+        "and": {
+            "right": {
+                "field": "date_created",
+                "condition": "LessThanEqual",
+                "val": str(date_to_ts),
+            },
+            "left": {
+                "field": "date_created",
+                "condition": "GreaterThanEqual",
+                "val": str(date_from_ts),
+            },
+        }
+    })
+
     request_data = {
         "offset": payload.get("offset", 0),
         "filters": {
             "dateCreated": {
                 "lte": date_to_str,
-                "gte": date_from_str,
+                "gte": date_from_str
             }
         },
         "order": [["date_created", "DESC"]],
-        "qFilters": payload.get("qFilters", {
-            "and": {
-                "right": {
-                    "field": "order_created_at",
-                    "condition": "LessThanEqual",
-                    "val": str(date_to_ts),
-                },
-                "left": {
-                    "field": "order_created_at",
-                    "condition": "GreaterThanEqual",
-                    "val": str(date_from_ts),
-                },
-            }
-        }),
-        "domain": payload.get("domain", "ordersELS"),
+        "qFilters": qFilters,
+        "domain": payload.get("domain", "txnsELS"),
         "sortDimension": "order_created_at",
     }
 
