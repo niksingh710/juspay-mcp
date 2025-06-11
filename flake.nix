@@ -1,21 +1,25 @@
 {
   description = "Flake for Juspay-mcp python project.";
+  # TODO: Split in multiple files.
 
   outputs =
-    inputs@{
-      flake-parts,
-      uv2nix,
-      pyproject-nix,
-      pyproject-build-systems,
-      ...
+    inputs@{ flake-parts
+    , uv2nix
+    , pyproject-nix
+    , pyproject-build-systems
+    , git-hooks
+    , ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
+      imports = [
+        (git-hooks + /flake-module.nix)
+      ];
       perSystem =
-        {
-          self',
-          pkgs,
-          ...
+        { self'
+        , config
+        , pkgs
+        , ...
         }:
         let
           inherit (pkgs) lib;
@@ -37,8 +41,6 @@
 
           editablePythonSet = pythonSet.overrideScope (
             lib.composeManyExtensions [
-              pyproject-build-systems.overlays.default
-              overlay
               editableOverlay
 
               (final: prev: {
@@ -65,6 +67,7 @@
           venv = editablePythonSet.mkVirtualEnv "juspay-mcp" workspace.deps.all;
         in
         {
+          pre-commit.settings.hooks.nixpkgs-fmt.enable = true;
           packages.default = pythonSet.mkVirtualEnv "juspay-mcp" workspace.deps.all;
           apps.default = {
             type = "app";
@@ -77,6 +80,9 @@
           };
           devShells.default = self'.devShells.uv2nix;
           devShells.uv2nix = pkgs.mkShell {
+            inputsFrom = [
+              config.pre-commit.devShell
+            ];
             packages = [
               venv
               pkgs.uv
@@ -101,6 +107,9 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     systems.url = "github:nix-systems/default";
+
+    git-hooks.url = "github:cachix/git-hooks.nix";
+    git-hooks.flake = false;
 
     pyproject-nix.url = "github:pyproject-nix/pyproject.nix";
     pyproject-nix.inputs.nixpkgs.follows = "nixpkgs";
