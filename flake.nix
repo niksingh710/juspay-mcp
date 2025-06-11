@@ -70,6 +70,11 @@
             type = "app";
             program = "${self'.packages.default}/bin/juspay-mcp";
           };
+          packages.test = python.withPackages (ps: with ps; [ pytest ]);
+          apps.test = {
+            type = "app";
+            program = "${self'.packages.test}/bin/pytest";
+          };
           devShells.default = self'.devShells.uv2nix;
           devShells.uv2nix = pkgs.mkShell {
             packages = [
