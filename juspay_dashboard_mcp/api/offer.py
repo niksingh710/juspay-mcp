@@ -44,7 +44,7 @@ async def get_offer_details_juspay(payload: dict, meta_info: dict = None) -> dic
     host = await get_juspay_host_from_api()
     api_url = f"{host}/api/offers/dashboard/detail?merchant_id={merchant_id}"
     
-    return await call(api_url, {}, meta_info)
+    return await post(api_url, payload, None, meta_info)
 
 async def list_offers_juspay(payload: dict, meta_info: dict = None) -> dict:
     """
