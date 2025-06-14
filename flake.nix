@@ -3,24 +3,14 @@
   # TODO: Split in multiple files.
 
   outputs =
-    inputs@{ flake-parts
-    , uv2nix
-    , pyproject-nix
-    , pyproject-build-systems
-    , git-hooks
-    , ...
-    }:
+    inputs@{ flake-parts, uv2nix, pyproject-nix, pyproject-build-systems, git-hooks, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
       imports = [
         (git-hooks + /flake-module.nix)
       ];
       perSystem =
-        { self'
-        , config
-        , pkgs
-        , ...
-        }:
+        { self', config, pkgs, ... }:
         let
           inherit (pkgs) lib;
           python = pkgs.python313;
