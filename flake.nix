@@ -1,97 +1,7 @@
 {
   description = "Flake for Juspay-mcp python project.";
-  # TODO: Split in multiple files.
-
-  outputs =
-    inputs@{ flake-parts, uv2nix, pyproject-nix, pyproject-build-systems, git-hooks, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = import inputs.systems;
-      imports = [
-        (git-hooks + /flake-module.nix)
-      ];
-      perSystem =
-        { self', config, pkgs, ... }:
-        let
-          inherit (pkgs) lib;
-          python = pkgs.python313;
-          workspace = uv2nix.lib.workspace.loadWorkspace { workspaceRoot = ./.; };
-          overlay = workspace.mkPyprojectOverlay { sourcePreference = "wheel"; };
-          editableOverlay = workspace.mkEditablePyprojectOverlay { root = "$REPO_ROOT"; };
-
-          pythonSet =
-            (pkgs.callPackage pyproject-nix.build.packages {
-              inherit python;
-            }).overrideScope
-              (
-                lib.composeManyExtensions [
-                  pyproject-build-systems.overlays.default
-                  overlay
-                ]
-              );
-
-          editablePythonSet = pythonSet.overrideScope (
-            lib.composeManyExtensions [
-              editableOverlay
-
-              (final: prev: {
-                juspay-mcp = prev.juspay-mcp.overrideAttrs (old: {
-                  src = lib.fileset.toSource {
-                    root = old.src;
-                    fileset = lib.fileset.unions [
-                      (old.src + "/pyproject.toml")
-                      (old.src + "/README.md")
-                      (old.src + "/juspay_mcp")
-                      (old.src + "/juspay_dashboard_mcp")
-                    ];
-                  };
-                  nativeBuildInputs =
-                    old.nativeBuildInputs
-                    ++ final.resolveBuildSystem {
-                      editables = [ ];
-                    };
-                });
-
-              })
-            ]
-          );
-          venv = editablePythonSet.mkVirtualEnv "juspay-mcp" workspace.deps.all;
-        in
-        {
-          pre-commit.settings.hooks.nixpkgs-fmt.enable = true;
-          packages.default = pythonSet.mkVirtualEnv "juspay-mcp" workspace.deps.all;
-          apps.default = {
-            type = "app";
-            program = "${self'.packages.default}/bin/juspay-mcp";
-          };
-          packages.test = python.withPackages (ps: with ps; [ pytest ]);
-          apps.test = {
-            type = "app";
-            program = "${self'.packages.test}/bin/pytest";
-          };
-          devShells.default = self'.devShells.uv2nix;
-          devShells.uv2nix = pkgs.mkShell {
-            inputsFrom = [
-              config.pre-commit.devShell
-            ];
-            packages = [
-              venv
-              pkgs.uv
-            ];
-            env = {
-              UV_NO_SYNC = "1";
-              UV_PYTHON = "${venv}/bin/python";
-              UV_PYTHON_DOWNLOADS = "never";
-            };
-
-            shellHook = # sh
-              ''
-                unset PYTHONPATH
-                export REPO_ROOT="$(git rev-parse --show-toplevel)"
-                export PYTHONPATH="$REPO_ROOT"
-              '';
-          };
-        };
-    };
+  # TODO: Simplify juspay/python-nix-template.
+  # Modularize it and use that to make this more simpler.
 
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
@@ -114,4 +24,10 @@
     pyproject-build-systems.inputs.nixpkgs.follows = "nixpkgs";
   };
 
+  outputs = inputs@{ flake-parts, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      debug = true;
+      systems = import inputs.systems;
+      imports = with builtins; map (fn: ./nix/${fn}) (attrNames (readDir ./nix));
+    };
 }
