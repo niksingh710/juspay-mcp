@@ -7,8 +7,17 @@ in
     let
       inherit (pkgs) lib;
       root = ./../.;
+      pythonVersionFile = "${root}/.python-version";
 
-      python = pkgs.python313;
+      versionStr =
+        with builtins;
+        with lib;
+        let
+          raw = if pathExists pythonVersionFile then readFile pythonVersionFile else "";
+          m = match "([0-9]+)\\.([0-9]+).*" (removeSuffix "\n" raw); # ["3" "13"]
+        in
+        if m != null && m != [ ] then concatStringsSep "" m else "313";
+      python = pkgs."python${versionStr}";
       workspace = uv2nix.lib.workspace.loadWorkspace { workspaceRoot = root; };
       overlay = workspace.mkPyprojectOverlay { sourcePreference = "wheel"; };
       editableOverlay = workspace.mkEditablePyprojectOverlay { root = "$REPO_ROOT"; };
