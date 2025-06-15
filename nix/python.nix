@@ -75,9 +75,9 @@ in
         };
       };
       apps = {
-        default.program = "${self'.packages.default}/bin/juspay-mcp";
-        test.program = "${self'.packages.test}/bin/pytest";
-        stdio.program = "${self'.packages.stdio}/bin/stdio";
+        default.program = "${lib.getExe' self'.packages.default "juspay-mcp"}";
+        test.program = "${lib.getExe' self'.packages.test "pytest"}";
+        stdio.program = "${lib.getExe' self'.packages.stdio "stdio"}";
       };
 
 
@@ -94,15 +94,17 @@ in
           ];
           env = {
             UV_NO_SYNC = "1";
-            UV_PYTHON = "${venv}/bin/python";
+            UV_PYTHON = "${lib.getExe' venv "python"}";
             UV_PYTHON_DOWNLOADS = "never";
           };
 
           shellHook = # sh
             ''
+              # Undo dependency propagation by nixpkgs.
               unset PYTHONPATH
-              export REPO_ROOT="$(git rev-parse --show-toplevel)"
-              echo 1>&2 "🐼: $(id -un) | 🧬: $(nix eval --raw --impure --expr 'builtins.currentSystem') | 🐧: $(uname -r) "
+
+              # Get repository root using git. This is expanded at runtime by the editable `.pth` machinery.
+              export REPO_ROOT=$(git rev-parse --show-toplevel)
             '';
         };
       };
