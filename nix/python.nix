@@ -1,3 +1,6 @@
+# NOTE: This module is temporary. It will soon be upstreamed to a dedicated flake-parts module,
+# and replaced with a minimal Nix file, similar to how haskell-flake is used in other repositories.
+# For progress and discussion, see: https://github.com/juspay/python-nix-template/issues/2
 { inputs, ... }:
 let
   inherit (inputs) uv2nix pyproject-nix pyproject-build-systems;
@@ -60,36 +63,48 @@ in
       venv = editablePythonSet.mkVirtualEnv "juspay-mcp" workspace.deps.all;
     in
     {
-      packages.default = pythonSet.mkVirtualEnv "juspay-mcp" workspace.deps.all;
-      packages.test = python.withPackages (ps: with ps; [ pytest ]);
-      packages.stdio = pkgs.writeShellScriptBin "stdio" ''
-        exec "${venv}/bib/python" ${inputs.self}/juspay-mcp/stdio.py "$@"
-      '';
-      devShells.default = self'.devShells.uv2nix;
-      apps.default.program = "${self'.packages.default}/bin/juspay-mcp";
-      apps.test.program = "${self'.packages.test}/bin/pytest";
-      apps.stdio.program = "${self'.packages.stdio}/bin/stdio";
-
-      devShells.uv2nix = pkgs.mkShell {
-        inputsFrom = [
-          config.pre-commit.devShell
-        ];
-        packages = [
-          venv
-          pkgs.uv
-        ];
-        env = {
-          UV_NO_SYNC = "1";
-          UV_PYTHON = "${venv}/bin/python";
-          UV_PYTHON_DOWNLOADS = "never";
-        };
-
-        shellHook = # sh
-          ''
-            unset PYTHONPATH
-            export REPO_ROOT="$(git rev-parse --show-toplevel)"
-            export PYTHONPATH="$REPO_ROOT"
+      packages = {
+        default = pythonSet.mkVirtualEnv "juspay-mcp" workspace.deps.all;
+        test = python.withPackages (ps: with ps; [ pytest ]);
+        stdio = pkgs.writeShellApplication {
+          name = "stdio";
+          runtimeInputs = [ venv ];
+          text = ''
+            exec "${venv}/bin/python" ${inputs.self}/juspay_mcp/stdio.py "$@"
           '';
+        };
+      };
+      apps = {
+        default.program = "${self'.packages.default}/bin/juspay-mcp";
+        test.program = "${self'.packages.test}/bin/pytest";
+        stdio.program = "${self'.packages.stdio}/bin/stdio";
+      };
+
+
+      devShells = {
+        default = self'.devShells.uv2nix;
+
+        uv2nix = pkgs.mkShell {
+          inputsFrom = [
+            config.pre-commit.devShell
+          ];
+          packages = [
+            venv
+            pkgs.uv
+          ];
+          env = {
+            UV_NO_SYNC = "1";
+            UV_PYTHON = "${venv}/bin/python";
+            UV_PYTHON_DOWNLOADS = "never";
+          };
+
+          shellHook = # sh
+            ''
+              unset PYTHONPATH
+              export REPO_ROOT="$(git rev-parse --show-toplevel)"
+              echo 1>&2 "🐼: $(id -un) | 🧬: $(nix eval --raw --impure --expr 'builtins.currentSystem') | 🐧: $(uname -r) "
+            '';
+        };
       };
     };
 }

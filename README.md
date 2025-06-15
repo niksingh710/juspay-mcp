@@ -101,7 +101,10 @@ nix run
 # For standard HTTP server (normally)
 python ./juspay_mcp/main.py
 
-# For STDIO mode (used with direct integrations)
+# For STDIO mode via nix
+nix run .#stdio
+
+# For STDIO mode via nix (standard method)
 python ./juspay_mcp/stdio.py
 ```
 
