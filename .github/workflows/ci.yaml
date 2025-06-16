@@ -26,4 +26,9 @@ jobs:
           nix profile install nixpkgs#omnix
 
       - name: Build all flake outputs
-        run: om ci run --systems "${{ matrix.system }}"
+        run: |
+          om ci run \
+            --extra-access-tokens ${{ secrets.GITHUB_TOKEN }} \
+            --systems "${{ matrix.system }}" \
+            --results=$HOME/omci.json \
+            -- --accept-flake-config
