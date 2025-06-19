@@ -16,6 +16,9 @@
             Entrypoint = [ "${lib.getExe' self'.packages.default "juspay-mcp"}" ];
           };
         };
+        # Use `docker run -it <image-name:hash>`
+        # For local running
+        # Without `-it` flag the process will terminate instantly
         docker-dashboard = n2c.buildImage {
           name = "juspay-mcp-dashboard";
           tag = "latest";
