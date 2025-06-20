@@ -33,22 +33,22 @@ jobs:
       # Build and push AMD64 images
       - name: Build and push AMD64 images
         run: |
-          nix build .#docker.copyToDockerDaemon --system x86_64-linux
+          nix run .#docker.copyToDockerDaemon --system x86_64-linux
           docker tag juspay-mcp:latest $IMAGE1:latest-amd64
           docker push $IMAGE1:latest-amd64
 
-          nix build .#docker-dashboard.copyToDockerDaemon --system x86_64-linux
+          nix run .#docker-dashboard.copyToDockerDaemon --system x86_64-linux
           docker tag juspay-dashboard-mcp:latest $IMAGE2:latest-amd64
           docker push $IMAGE2:latest-amd64
 
       # Build and push ARM64 images
       - name: Build and push ARM64 images
         run: |
-          nix build .#docker.copyToDockerDaemon --system aarch64-linux
+          nix run .#docker.copyToDockerDaemon --system aarch64-linux
           docker tag juspay-mcp:latest $IMAGE1:latest-arm64
           docker push $IMAGE1:latest-arm64
 
-          nix build .#docker-dashboard.copyToDockerDaemon --system aarch64-linux
+          nix run .#docker-dashboard.copyToDockerDaemon --system aarch64-linux
           docker tag juspay-dashboard-mcp:latest $IMAGE2:latest-arm64
           docker push $IMAGE2:latest-arm64
 
