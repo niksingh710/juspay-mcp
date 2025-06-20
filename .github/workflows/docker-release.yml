@@ -11,8 +11,6 @@ jobs:
         include:
           - runner: ubuntu-latest
             system: x86_64-linux
-          - runner: ubuntu-latest
-            system: aarch64-linux
 
     steps:
       - name: 📦 Checkout Code
@@ -30,25 +28,17 @@ jobs:
       - name: "Build juspay-mcp image via Nix"
         run: |
           nix run .#docker.copyToDockerDaemon
-          # docker tag juspay-mcp:latest jusapy-mcp:${{ github.ref_name }}
+          docker tag juspay-mcp:latest ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-mcp:latest
 
-      - name: "Build and push"
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-mcp:latest
+      - name: "Push juspay-mcp image"
+        run: |
+          docker push ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-mcp:latest
 
       - name: "Build juspay-dashboard-mcp image via Nix"
         run: |
           nix run .#docker-dashboard.copyToDockerDaemon
-          # docker tag juspay-dashboard-mcp:latest jusapy-dashboard-mcp:${{ github.ref_name }}
+          docker tag juspay-dashboard-mcp:latest ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-dashboard-mcp:latest
 
-      - name: "Build and push"
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-dashboard-mcp:latest
+      - name: "Push juspay-dashboard-mcp image"
+        run: |
+          docker push ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-dashboard-mcp:latest
