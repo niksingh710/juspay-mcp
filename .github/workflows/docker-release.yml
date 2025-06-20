@@ -16,7 +16,7 @@ jobs:
             arch: amd64
             system: x86_64-linux
             tag_suffix: amd64
-          - runner: ARM64
+          - runner: ubuntu-24.04-arm
             arch: arm64
             system: aarch64-linux
             tag_suffix: arm64
