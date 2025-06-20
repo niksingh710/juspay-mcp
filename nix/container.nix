@@ -20,7 +20,7 @@
         # For local running
         # Without `-it` flag the process will terminate instantly
         docker-dashboard = n2c.buildImage {
-          name = "juspay-mcp-dashboard";
+          name = "juspay-dashboard-mcp";
           tag = "latest";
           config = {
             Env = [
