@@ -11,6 +11,9 @@ jobs:
         include:
           - runner: ubuntu-latest
             system: x86_64-linux
+          - runner: ubuntu-latest
+            system: aarch64-linux
+
     steps:
       - name: 📦 Checkout Code
         uses: actions/checkout@v4
@@ -33,7 +36,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/amd64, linux/arm64
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-mcp:latest
@@ -47,7 +49,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/amd64, linux/arm64
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-dashboard-mcp:latest
