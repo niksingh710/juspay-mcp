@@ -1,9 +1,13 @@
-name: Multi-arch Nix2Container CI
+name: Release Docker Images
 
 on:
   push:
     tags:
       - "v*"
+
+# Global environment variables available to all jobs
+env:
+  CI_SCRIPTS_PATH: ./.github/workflows/scripts/ci-helpers.sh
 
 jobs:
   build-and-push:
@@ -21,8 +25,8 @@ jobs:
 
     runs-on: ${{ matrix.runner }}
     env:
-      IMAGE1: ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-mcp
-      IMAGE2: ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-dashboard-mcp
+      IMAGE_MCP: ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-mcp
+      IMAGE_DASHBOARD: ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-dashboard-mcp
 
     steps:
       - name: 📦 Checkout Code
@@ -37,42 +41,103 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Build and push juspay-mcp image
+      - name: 🛠️ Build & Push juspay-mcp
         run: |
-          nix run .#docker.copyToDockerDaemon --system ${{ matrix.system }}
-          docker tag juspay-mcp:latest $IMAGE1:${{ github.ref_name }}-${{ matrix.tag_suffix }}
-          docker push $IMAGE1:${{ github.ref_name }}-${{ matrix.tag_suffix }}
+          source $CI_SCRIPTS_PATH
+          build_and_push_release \
+            "docker" \
+            "juspay-mcp" \
+            "$IMAGE_MCP" \
+            "" \
+            "${{ github.ref_name }}" \
+            "${{ matrix.tag_suffix }}" \
+            "${{ matrix.system }}"
 
-      - name: Build and push juspay-dashboard-mcp image
+      - name: 🛠️ Build & Push juspay-mcp (SSE)
         run: |
-          nix run .#docker-dashboard.copyToDockerDaemon --system ${{ matrix.system }}
-          docker tag juspay-dashboard-mcp:latest $IMAGE2:${{ github.ref_name }}-${{ matrix.tag_suffix }}
-          docker push $IMAGE2:${{ github.ref_name }}-${{ matrix.tag_suffix }}
+          source $CI_SCRIPTS_PATH
+          build_and_push_release \
+            "docker-sse" \
+            "juspay-mcp-sse" \
+            "$IMAGE_MCP" \
+            "sse-" \
+            "${{ github.ref_name }}" \
+            "${{ matrix.tag_suffix }}" \
+            "${{ matrix.system }}"
+
+      - name: 🛠️ Build & Push juspay-dashboard-mcp
+        run: |
+          source $CI_SCRIPTS_PATH
+          build_and_push_release \
+            "docker-dashboard" \
+            "juspay-dashboard-mcp" \
+            "$IMAGE_DASHBOARD" \
+            "" \
+            "${{ github.ref_name }}" \
+            "${{ matrix.tag_suffix }}" \
+            "${{ matrix.system }}"
+
+      - name: 🛠️ Build & Push juspay-dashboard-mcp (SSE)
+        run: |
+          source $CI_SCRIPTS_PATH
+          build_and_push_release \
+            "docker-dashboard-sse" \
+            "juspay-dashboard-mcp-sse" \
+            "$IMAGE_DASHBOARD" \
+            "sse-" \
+            "${{ github.ref_name }}" \
+            "${{ matrix.tag_suffix }}" \
+            "${{ matrix.system }}"
 
   manifest:
     needs: build-and-push
     runs-on: ubuntu-latest
     env:
-      IMAGE1: ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-mcp
-      IMAGE2: ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-dashboard-mcp
+      IMAGE_MCP: ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-mcp
+      IMAGE_DASHBOARD: ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-dashboard-mcp
 
     steps:
+      - name: 📦 Checkout Code
+        uses: actions/checkout@v4
+
       - name: 🔐 Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Create and push multi-arch manifest for juspay-mcp
+      - name: 🏗️ Create manifest for juspay-mcp (latest)
         run: |
-          docker manifest create $IMAGE1:latest \
-            --amend $IMAGE1:${{ github.ref_name }}-amd64 \
-            --amend $IMAGE1:${{ github.ref_name }}-arm64
-          docker manifest push $IMAGE1:latest
+          source $CI_SCRIPTS_PATH
+          create_release_manifest \
+            "$IMAGE_MCP" \
+            "latest" \
+            "" \
+            "${{ github.ref_name }}"
 
-      - name: Create and push multi-arch manifest for juspay-dashboard-mcp
+      - name: 🏗️ Create manifest for juspay-mcp (sse-latest)
         run: |
-          docker manifest create $IMAGE2:latest \
-            --amend $IMAGE2:${{ github.ref_name }}-amd64 \
-            --amend $IMAGE2:${{ github.ref_name }}-arm64
-          docker manifest push $IMAGE2:latest
+          source $CI_SCRIPTS_PATH
+          create_release_manifest \
+            "$IMAGE_MCP" \
+            "sse-latest" \
+            "sse-" \
+            "${{ github.ref_name }}"
+
+      - name: 🏗️ Create manifest for juspay-dashboard-mcp (latest)
+        run: |
+          source $CI_SCRIPTS_PATH
+          create_release_manifest \
+            "$IMAGE_DASHBOARD" \
+            "latest" \
+            "" \
+            "${{ github.ref_name }}"
+
+      - name: 🏗️ Create manifest for juspay-dashboard-mcp (sse-latest)
+        run: |
+          source $CI_SCRIPTS_PATH
+          create_release_manifest \
+            "$IMAGE_DASHBOARD" \
+            "sse-latest" \
+            "sse-" \
+            "${{ github.ref_name }}"
