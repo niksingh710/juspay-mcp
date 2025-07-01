@@ -25,7 +25,7 @@
       };
       dashboard = default // {
         # Parallel of Dockerfile.dashboard
-        name = "juspay-mcp-dashboard";
+        name = "juspay-dashboard-mcp";
         config = default.config // {
           Env = default.config.Env ++ [ "JUSPAY_MCP_TYPE=DASHBOARD" ];
           Entrypoint = [ "${lib.getExe' self'.packages.stdio "stdio"}" ];
@@ -33,7 +33,7 @@
       };
       dashboard-sse = dashboard // {
         # Parallel of Dockerfile.dashboard-sse
-        name = "juspay-mcp-dashboard-sse";
+        name = "juspay-dashboard-mcp-sse";
         config = dashboard.config // {
           ExposedPorts = {
             "8000/tcp" = { };
