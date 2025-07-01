@@ -80,8 +80,8 @@ jobs:
       - name: Create and push multi-arch manifest for juspay-mcp
         run: |
           docker manifest create $IMAGE1:latest \
-            --amend $IMAGE1:latest-amd64 \
-            --amend $IMAGE1:latest-arm64
+            --amend $IMAGE1:amd64 \
+            --amend $IMAGE1:arm64
           docker manifest push $IMAGE1:latest
           docker manifest create $IMAGE1:sse-latest \
             --amend $IMAGE1:sse-amd64 \
@@ -91,8 +91,8 @@ jobs:
       - name: Create and push multi-arch manifest for juspay-dashboard-mcp
         run: |
           docker manifest create $IMAGE2:latest \
-            --amend $IMAGE2:latest-amd64 \
-            --amend $IMAGE2:latest-arm64
+            --amend $IMAGE2:amd64 \
+            --amend $IMAGE2:arm64
           docker manifest push $IMAGE2:latest
           docker manifest create $IMAGE2:sse-latest \
             --amend $IMAGE2:amd64 \
