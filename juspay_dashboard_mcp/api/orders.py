@@ -13,7 +13,7 @@ import dotenv
 
 dotenv.load_dotenv()
 
-async def list_orders_v4_juspay(payload: dict) -> dict:
+async def list_orders_v4_juspay(payload: dict, meta_info: dict = None) -> dict:
     """
     Calls the Juspay Portal API to retrieve a list of orders within a specified time range.
 
@@ -27,7 +27,7 @@ async def list_orders_v4_juspay(payload: dict) -> dict:
             - orderType: Optional filter for order type
 
     Returns:
-        dict: The parsed JSON response from the List Orders API.
+        dict: The parsed JSON response from the List Orders API with hyperlinks added to each order.
 
     Raises:
         ValueError: If required parameters are missing or date formats are invalid.
@@ -93,10 +93,23 @@ async def list_orders_v4_juspay(payload: dict) -> dict:
 
     host = await get_juspay_host_from_api()
     api_url = f"{host}/ec/v4/orders"
-    return await post(api_url, request_data)
+
+    response = await post(api_url, request_data, None, meta_info)
+    
+    excluded_hosts = [
+        "https://euler-x.internal.svc.k8s.mum.juspay.net/",
+        "https://euler-x.internal.staging.mum.juspay.net/"
+    ]
+    
+    if host not in excluded_hosts and "rows" in response:
+        for order in response["rows"]:
+            if "orderId" in order:
+                order["hyperlink"] = f"{host}/orders/{order['orderId']}"
+    return response
 
 
-async def get_order_details_juspay(payload: dict) -> dict:
+
+async def get_order_details_juspay(payload: dict, meta_info: dict) -> dict:
     """
     Calls the Juspay Portal API to retrieve detailed information for a specific order.
 
@@ -116,4 +129,4 @@ async def get_order_details_juspay(payload: dict) -> dict:
 
     host = await get_juspay_host_from_api()
     api_url = f"{host}/api/ec/v1/orders/{order_id}"
-    return await post(api_url, {})
+    return await post(api_url, {}, None, meta_info)
