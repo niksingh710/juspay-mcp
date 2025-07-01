@@ -42,19 +42,25 @@ jobs:
       - name: Build and push juspay-mcp image
         run: |
           nix run .#docker.copyToDockerDaemon --system ${{ matrix.system }}
-          nix run .#docker-sse.copyToDockerDaemon --system ${{ matrix.system }}
           docker tag juspay-mcp:latest $IMAGE1:${{ matrix.tag_suffix }}
-          docker tag juspay-mcp-sse:latest $IMAGE1:sse-${{ matrix.tag_suffix }}
           docker push $IMAGE1:${{ matrix.tag_suffix }}
+
+      - name: Build and push juspay-mcp-sse image
+        run: |
+          nix run .#docker-sse.copyToDockerDaemon --system ${{ matrix.system }}
+          docker tag juspay-mcp-sse:latest $IMAGE1:sse-${{ matrix.tag_suffix }}
           docker push $IMAGE1:sse-${{ matrix.tag_suffix }}
 
       - name: Build and push juspay-dashboard-mcp image
         run: |
           nix run .#docker-dashboard.copyToDockerDaemon --system ${{ matrix.system }}
-          nix run .#docker-dashboard-sse.copyToDockerDaemon --system ${{ matrix.system }}
           docker tag juspay-dashboard-mcp:latest $IMAGE2:${{ matrix.tag_suffix }}
-          docker tag juspay-dashboard-mcp-sse:latest $IMAGE2:sse-${{ matrix.tag_suffix }}
           docker push $IMAGE2:${{ matrix.tag_suffix }}
+
+      - name: Build and push juspay-dashboard-mcp-sse image
+        run: |
+          nix run .#docker-dashboard-sse.copyToDockerDaemon --system ${{ matrix.system }}
+          docker tag juspay-dashboard-mcp-sse:latest $IMAGE2:sse-${{ matrix.tag_suffix }}
           docker push $IMAGE2:sse-${{ matrix.tag_suffix }}
 
   manifest:
