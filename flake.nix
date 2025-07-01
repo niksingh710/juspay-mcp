@@ -1,7 +1,5 @@
 {
   description = "Flake for Juspay-mcp python project.";
-  # TODO: Simplify juspay/python-nix-template.
-  # Modularize it and use that to make this more simpler.
 
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
