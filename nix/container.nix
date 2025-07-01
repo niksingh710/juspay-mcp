@@ -16,6 +16,7 @@
       };
       sse = default // {
         # Parallel of Dockerfile.sse
+        name = "juspay-mcp-sse";
         config = default.config // {
           ExposedPorts = {
             "8000/tcp" = { };
@@ -24,17 +25,20 @@
       };
       dashboard = default // {
         # Parallel of Dockerfile.dashboard
+        name = "juspay-mcp-dashboard";
         config = default.config // {
           Env = default.config.Env ++ [ "JUSPAY_MCP_TYPE=DASHBOARD" ];
+          Entrypoint = [ "${lib.getExe' self'.packages.stdio "stdio"}" ];
         };
       };
       dashboard-sse = dashboard // {
         # Parallel of Dockerfile.dashboard-sse
+        name = "juspay-mcp-dashboard-sse";
         config = dashboard.config // {
           ExposedPorts = {
             "8000/tcp" = { };
           };
-          # FIXME: Once `@ag` confirms the EntryPoint it is good to go
+          Entrypoint = [ "${lib.getExe' self'.packages.default "juspay-mcp"}" ];
         };
       };
     in
