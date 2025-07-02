@@ -1,4 +1,4 @@
-name: Multi-arch Nix2Container CI
+name: Release Docker Images
 
 on:
   push:
@@ -21,8 +21,8 @@ jobs:
 
     runs-on: ${{ matrix.runner }}
     env:
-      IMAGE1: ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-mcp
-      IMAGE2: ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-dashboard-mcp
+      IMAGE_MCP: ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-mcp
+      IMAGE_DASHBOARD: ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-dashboard-mcp
 
     steps:
       - name: 📦 Checkout Code
@@ -37,36 +37,37 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Build and push juspay-mcp image
+      - name: Build and push all images
         run: |
-          nix run .#docker.copyToDockerDaemon --system ${{ matrix.system }}
-          docker tag juspay-mcp:latest $IMAGE1:${{ github.ref_name }}-${{ matrix.tag_suffix }}
-          docker push $IMAGE1:${{ github.ref_name }}-${{ matrix.tag_suffix }}
+          # Function to build, tag and push images for releases
+          build_and_push_release() {
+            local nix_target="$1"
+            local source_tag="$2"
+            local target_image="$3"
+            local tag_prefix="$4"
+            local version="${{ github.ref_name }}"
+            local arch_suffix="${{ matrix.tag_suffix }}"
 
-      - name: Build and push juspay-mcp for sse
-        run: |
-          nix run .#docker-sse.copyToDockerDaemon --system ${{ matrix.system }}
-          docker tag juspay-mcp-sse:latest $IMAGE1:sse-${{ github.ref_name }}-${{ matrix.tag_suffix }}
-          docker push $IMAGE1:sse-${{ github.ref_name }}-${{ matrix.tag_suffix }}
+            local final_tag="${tag_prefix}${version}-${arch_suffix}"
 
-      - name: Build and push juspay-dashboard-mcp
-        run: |
-          nix run .#docker-dashboard.copyToDockerDaemon --system ${{ matrix.system }}
-          docker tag juspay-dashboard-mcp:latest $IMAGE2:${{ github.ref_name }}-${{ matrix.tag_suffix }}
-          docker push $IMAGE2:${{ github.ref_name }}-${{ matrix.tag_suffix }}
+            echo "Building and pushing $source_tag -> $target_image:$final_tag"
+            nix run .#${nix_target}.copyToDockerDaemon --system ${{ matrix.system }}
+            docker tag ${source_tag}:latest ${target_image}:${final_tag}
+            docker push ${target_image}:${final_tag}
+          }
 
-      - name: Build and push juspay-dashboard-mcp for sse
-        run: |
-          nix run .#docker-dashboard-sse.copyToDockerDaemon --system ${{ matrix.system }}
-          docker tag juspay-dashboard-mcp-sse:latest $IMAGE2:sse-${{ github.ref_name }}-${{ matrix.tag_suffix }}
-          docker push $IMAGE2:sse-${{ github.ref_name }}-${{ matrix.tag_suffix }}
+          # Build and push all images
+          build_and_push_release "docker" "juspay-mcp" "$IMAGE_MCP" ""
+          build_and_push_release "docker-sse" "juspay-mcp-sse" "$IMAGE_MCP" "sse-"
+          build_and_push_release "docker-dashboard" "juspay-dashboard-mcp" "$IMAGE_DASHBOARD" ""
+          build_and_push_release "docker-dashboard-sse" "juspay-dashboard-mcp-sse" "$IMAGE_DASHBOARD" "sse-"
 
   manifest:
     needs: build-and-push
     runs-on: ubuntu-latest
     env:
-      IMAGE1: ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-mcp
-      IMAGE2: ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-dashboard-mcp
+      IMAGE_MCP: ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-mcp
+      IMAGE_DASHBOARD: ${{ secrets.DOCKERHUB_NAMESPACE }}/juspay-dashboard-mcp
 
     steps:
       - name: 🔐 Log in to Docker Hub
@@ -75,24 +76,27 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Create and push multi-arch manifest for juspay-mcp and sse
+      - name: Create and push multi-arch manifests
         run: |
-          docker manifest create $IMAGE1:latest \
-            --amend $IMAGE1:${{ github.ref_name }}-amd64 \
-            --amend $IMAGE1:${{ github.ref_name }}-arm64
-          docker manifest push $IMAGE1:latest
-          docker manifest create $IMAGE1:sse-latest \
-            --amend $IMAGE1:sse-${{ github.ref_name }}-amd64 \
-            --amend $IMAGE1:sse-${{ github.ref_name }}-arm64
-          docker manifest push $IMAGE1:sse-latest
+          # Function to create and push multi-arch manifest for releases
+          create_release_manifest() {
+            local image="$1"
+            local tag="$2"
+            local tag_prefix="$3"
+            local version="${{ github.ref_name }}"
 
-      - name: Create and push multi-arch manifest for juspay-dashboard-mcp and sse
-        run: |
-          docker manifest create $IMAGE2:latest \
-            --amend $IMAGE2:${{ github.ref_name }}-amd64 \
-            --amend $IMAGE2:${{ github.ref_name }}-arm64
-          docker manifest push $IMAGE2:latest
-          docker manifest create $IMAGE2:sse-latest \
-            --amend $IMAGE2:${{ github.ref_name }}-amd64 \
-            --amend $IMAGE2:${{ github.ref_name }}-arm64
-          docker manifest push $IMAGE2:sse-latest
+            local amd64_tag="${tag_prefix}${version}-amd64"
+            local arm64_tag="${tag_prefix}${version}-arm64"
+
+            echo "Creating manifest for $image:$tag"
+            docker manifest create ${image}:${tag} \
+              --amend ${image}:${amd64_tag} \
+              --amend ${image}:${arm64_tag}
+            docker manifest push ${image}:${tag}
+          }
+
+          # Create manifests for all images
+          create_release_manifest "$IMAGE_MCP" "latest" ""
+          create_release_manifest "$IMAGE_MCP" "sse-latest" "sse-"
+          create_release_manifest "$IMAGE_DASHBOARD" "latest" ""
+          create_release_manifest "$IMAGE_DASHBOARD" "sse-latest" "sse-"

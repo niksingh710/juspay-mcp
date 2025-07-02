@@ -14,6 +14,7 @@ A Model Context Protocol (MCP) server to interact with Juspay APIs. This package
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
     - [Quick Start](#quick-start)
+    - [Docker Images](#docker-images)
   - [Usage with Claude and Other AI Assistants](#usage-with-claude-and-other-ai-assistants)
     - [Juspay Payments MCP](#juspay-payments-mcp)
     - [Juspay Dashboard MCP](#juspay-dashboard-mcp)
@@ -88,6 +89,59 @@ nix run .#stdio
 
 # For STDIO mode via nix (standard method)
 python ./juspay_mcp/stdio.py
+```
+
+### Docker Images
+> Nix will build the docker image and copy it to the Docker Registry.
+
+```bash
+# Build main MCP image
+nix run .#docker.copyToDockerDaemon
+
+# Build SSE-enabled MCP image
+nix run .#docker-sse.copyToDockerDaemon
+
+# Build dashboard MCP image
+nix run .#docker-dashboard.copyToDockerDaemon
+
+# Build dashboard SSE-enabled MCP image
+nix run .#docker-dashboard-sse.copyToDockerDaemon
+```
+
+#### Viewing Images
+
+```bash
+# List all juspay images
+docker images | grep juspay
+
+# List all Docker images
+docker images
+```
+
+#### Running Images
+
+```bash
+# Run main MCP server
+docker run -it --rm juspay-mcp:latest
+
+# Run SSE-enabled MCP server
+docker run -it --rm juspay-mcp-sse:latest
+
+# Run dashboard MCP server
+docker run -it --rm juspay-dashboard-mcp:latest
+
+# Run dashboard SSE-enabled MCP server
+docker run -it --rm juspay-dashboard-mcp-sse:latest
+
+# Run with port mapping (example)
+docker run -it --rm -p 8000:8000 juspay-mcp-sse:latest
+```
+
+#### Clean Up
+
+```bash
+# Remove specific image
+docker rmi juspay-mcp:latest
 ```
 
 ## Usage with Claude and Other AI Assistants
