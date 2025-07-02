@@ -4,18 +4,16 @@
     let
       n2c = inputs.nix2container.packages.${pkgs.system}.nix2container;
       default = {
-        # Parallel of `Dockerfile`
         name = "juspay-mcp";
         tag = "latest";
         config = {
           Env = [
             "PYTHONUNBUFFERED=1"
           ];
-          Entrypoint = [ "${lib.getExe' self'.packages.default "juspay-mcp"}" ];
+          Entrypoint = [ (lib.getExe' self'.packages.default "juspay-mcp") ];
         };
       };
       sse = default // {
-        # Parallel of Dockerfile.sse
         name = "juspay-mcp-sse";
         config = default.config // {
           ExposedPorts = {
@@ -24,21 +22,19 @@
         };
       };
       dashboard = default // {
-        # Parallel of Dockerfile.dashboard
         name = "juspay-dashboard-mcp";
         config = default.config // {
           Env = default.config.Env ++ [ "JUSPAY_MCP_TYPE=DASHBOARD" ];
-          Entrypoint = [ "${lib.getExe' self'.packages.stdio "stdio"}" ];
+          Entrypoint = [ (lib.getExe' self'.packages.stdio "stdio") ];
         };
       };
       dashboard-sse = dashboard // {
-        # Parallel of Dockerfile.dashboard-sse
         name = "juspay-dashboard-mcp-sse";
         config = dashboard.config // {
           ExposedPorts = {
             "8000/tcp" = { };
           };
-          Entrypoint = [ "${lib.getExe' self'.packages.default "juspay-mcp"}" ];
+          Entrypoint = [ (lib.getExe' self'.packages.default "juspay-mcp") ];
         };
       };
     in
