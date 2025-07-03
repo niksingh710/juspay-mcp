@@ -2,6 +2,8 @@ name: Release Docker Images
 
 on:
   push:
+    branches:
+      - "vtest"
     tags:
       - "v*"
 
