@@ -191,7 +191,7 @@ AVAILABLE_TOOLS = [
     ),
     util.make_api_config(
     name="rag_tool_juspay",
-    description="Query the RAG (Retrieval Augmented Generation) system using Vertex AI for intelligent document retrieval and question answering. Requires a 'query' parameter with the question to ask the RAG system. Optional 'similarity_top_k' parameter controls the number of similar documents to retrieve (default: 20). The Data sources are https://juspay.io/in/docs (Juspay Product Documentation).",
+    description="Use this tool when you need to retrieve information about Juspay's products, services, APIs, integration guides, or technical documentation . The Data source for this tool is  https://juspay.io/in/docs (Juspay's Product Documentation) . This tool provides comprehensive info regarding Juspay's product documnetations.",
     model=api_schema.rag_tool.JuspayRagQueryPayload,
     handler=rag_tool.query_rag_tool,
     response_schema=response_schema.rag_query_response_schema,
