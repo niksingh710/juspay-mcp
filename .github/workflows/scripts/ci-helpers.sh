@@ -13,9 +13,9 @@ build_and_push_release() {
   local final_tag="${tag_prefix}${version}-${arch_suffix}"
 
   echo "Building and pushing $source_tag -> $target_image:$final_tag"
-  nix run .#${nix_target}.copyToDockerDaemon --system ${system}
-  docker tag ${source_tag}:latest ${target_image}:${final_tag}
-  docker push ${target_image}:${final_tag}
+  nix run .#"${nix_target}".copyToDockerDaemon --system "${system}"
+  docker tag "${source_tag}":latest "${target_image}":"${final_tag}"
+  docker push "${target_image}":"${final_tag}"
 }
 
 # Function to create and push multi-arch manifest for releases via nix
@@ -29,10 +29,10 @@ create_release_manifest() {
   local arm64_tag="${tag_prefix}${version}-arm64"
 
   echo "Creating manifest for $image:$tag"
-  docker manifest create ${image}:${tag} \
-    --amend ${image}:${amd64_tag} \
-    --amend ${image}:${arm64_tag}
-  docker manifest push ${image}:${tag}
+  docker manifest create "${image}":"${tag}" \
+    --amend "${image}":"${amd64_tag}" \
+    --amend "${image}":"${arm64_tag}"
+  docker manifest push "${image}":"${tag}"
 }
 
 # Export functions for use in CI
