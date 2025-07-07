@@ -24,6 +24,6 @@ USER appuser
 
 RUN pip install --no-cache-dir --no-build-isolation . --root-user-action=ignore
 
-EXPOSE 8000
+EXPOSE 8080
 
 CMD ["python", "juspay_mcp/main.py"]
