@@ -14,6 +14,8 @@ import contextlib
 
 from starlette.applications import Starlette
 from starlette.routing import Mount, Route
+from starlette.responses import JSONResponse
+
 from mcp.server.sse import SseServerTransport
 from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
 if os.getenv("JUSPAY_MCP_TYPE") == "DASHBOARD":
@@ -66,8 +68,8 @@ def main(host: str, port: int, mode: str):
         stateless=True  
     )
 
-    async def health_check():
-        return {"status": "ok"}
+    async def health_check(request):
+        return JSONResponse({"status": "ok"})
     
     async def handle_sse_connection(request):
         """Handles a single client SSE connection and runs the MCP session."""
