@@ -134,7 +134,7 @@ docker run -it juspay-dashboard-mcp:latest
 docker run -it juspay-dashboard-mcp-sse:latest
 
 # Run with port mapping (example)
-docker run -it -p 8000:8000 juspay-mcp-sse:latest
+docker run -it -p 8080:8080 juspay-mcp-sse:latest
 ```
 
 #### Clean Up
@@ -246,7 +246,7 @@ The server runs _either_ Core _or_ Dashboard tools per instance, controlled by `
 
 ```bash
 # Terminal 1: Run Core API server
-JUSPAY_MCP_TYPE=CORE python main.py --port 8000
+JUSPAY_MCP_TYPE=CORE python main.py --port 8080
 
 # Terminal 2: Run Dashboard API server
 JUSPAY_MCP_TYPE=DASHBOARD python main.py --port 8001
