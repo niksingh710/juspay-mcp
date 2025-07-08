@@ -122,19 +122,19 @@ docker images
 
 ```bash
 # Run main MCP server
-docker run -it --rm juspay-mcp:latest
+docker run -it juspay-mcp:latest
 
 # Run SSE-enabled MCP server
-docker run -it --rm juspay-mcp-sse:latest
+docker run -it juspay-mcp-sse:latest
 
 # Run dashboard MCP server
-docker run -it --rm juspay-dashboard-mcp:latest
+docker run -it juspay-dashboard-mcp:latest
 
 # Run dashboard SSE-enabled MCP server
-docker run -it --rm juspay-dashboard-mcp-sse:latest
+docker run -it juspay-dashboard-mcp-sse:latest
 
 # Run with port mapping (example)
-docker run -it --rm -p 8000:8000 juspay-mcp-sse:latest
+docker run -it -p 8000:8000 juspay-mcp-sse:latest
 ```
 
 #### Clean Up

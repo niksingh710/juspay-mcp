@@ -17,7 +17,7 @@
         name = "juspay-mcp-sse";
         config = default.config // {
           ExposedPorts = {
-            "8000/tcp" = { };
+            "8080/tcp" = { };
           };
         };
       };
@@ -32,7 +32,7 @@
         name = "juspay-dashboard-mcp-sse";
         config = dashboard.config // {
           ExposedPorts = {
-            "8000/tcp" = { };
+            "8080/tcp" = { };
           };
           Entrypoint = [ (lib.getExe' self'.packages.default "juspay-mcp") ];
         };

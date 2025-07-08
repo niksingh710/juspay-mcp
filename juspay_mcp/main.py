@@ -14,6 +14,8 @@ import contextlib
 
 from starlette.applications import Starlette
 from starlette.routing import Mount, Route
+from starlette.responses import JSONResponse
+
 from mcp.server.sse import SseServerTransport
 from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
 if os.getenv("JUSPAY_MCP_TYPE") == "DASHBOARD":
@@ -35,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 @click.command()
 @click.option("--host", default="0.0.0.0", help="Host to bind the server to.")
-@click.option("--port", default=8000, type=int, help="Port to listen on for SSE.")
+@click.option("--port", default=8080, type=int, help="Port to listen on for SSE.")
 @click.option("--mode", default="http", type=click.Choice(['http', 'stdio']), 
               help="Server mode: 'http' for HTTP/SSE server or 'stdio' for stdio server.")
 def main(host: str, port: int, mode: str):
@@ -65,6 +67,9 @@ def main(host: str, port: int, mode: str):
         json_response=True, 
         stateless=True  
     )
+
+    async def health_check(request):
+        return JSONResponse({"status": "ok"})
     
     async def handle_sse_connection(request):
         """Handles a single client SSE connection and runs the MCP session."""
@@ -109,6 +114,8 @@ def main(host: str, port: int, mode: str):
             Route(sse_endpoint_path, endpoint=handle_sse_connection),
             Mount(message_endpoint_path, app=sse_transport_handler.handle_post_message),
             Route(streamable_endpoint_path, endpoint=handle_streamable_http, methods=["GET", "POST", "DELETE"]),
+            Route("/health", endpoint=health_check, methods=["GET"]),
+            Route("/health/ready", endpoint=health_check, methods=["GET"])
         ],
     )
 
